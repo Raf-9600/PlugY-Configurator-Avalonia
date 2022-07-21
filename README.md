@@ -1,6 +1,8 @@
 # PlugY Configurator Avalonia
 PlugY Configurator with AvaloniaUI
 
+Supported OS - https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md
+
 # Thanks
 
 • Yohann Nicolas, for creating PlugY http://plugy.free.fr/en/index.html
