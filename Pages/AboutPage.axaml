@@ -1,0 +1,307 @@
+<UserControl
+    x:Class="PlugY_Configurator_Avalonia.Pages.AboutPage"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i18n="clr-namespace:AvaloniaLocalizationExample.Localizer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="Button.LinkButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0,0,0,0" />
+            <Setter Property="BorderBrush" Value="RoyalBlue" />
+            <Setter Property="Command" Value="{Binding BtnClick}" />
+            <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Self}, Path=Content}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="5,0,0,0" />
+            <Setter Property="Foreground" Value="#00B6FF" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.LinkButton:pointerover">
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="BorderThickness" Value="0.2" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+
+        <Style Selector="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+		<Style Selector="MenuItem">
+			<Setter Property="Command" Value="{Binding BtnClipboardClick}" />
+			<Setter Property="CommandParameter" Value="{Binding $parent[Button].Content}" />
+			<Setter Property="Header" Value="{i18n:Localize ClipboardCopy}" />
+		</Style>
+
+    </UserControl.Styles>
+
+    <UserControl.Resources>
+
+        <GeometryDrawing
+            x:Key="ExternalLinkAlt"
+            Brush="{StaticResource SystemAccentColor}"
+            Geometry="M18,10.82a1,1,0,0,0-1,1V19a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V8A1,1,0,0,1,5,7h7.18a1,1,0,0,0,0-2H5A3,3,0,0,0,2,8V19a3,3,0,0,0,3,3H16a3,3,0,0,0,3-3V11.82A1,1,0,0,0,18,10.82Zm3.92-8.2a1,1,0,0,0-.54-.54A1,1,0,0,0,21,2H15a1,1,0,0,0,0,2h3.59L8.29,14.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L20,5.41V9a1,1,0,0,0,2,0V3A1,1,0,0,0,21.92,2.62Z" />
+
+    </UserControl.Resources>
+
+
+	<ScrollViewer HorizontalAlignment="Stretch"
+        Margin="0"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical">
+
+            <Image
+                MaxWidth="{Binding WindowWidth}"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top"
+                IsVisible="{Binding SelfLng_rus}"
+                Source="/Assets/Images/NoWar.jpg"
+                Stretch="Uniform" />
+
+
+            <Grid
+                Grid.Row="0"
+                VerticalAlignment="Top"
+                IsVisible="{Binding !SelfLng_rus}">
+                <Grid
+                    Grid.Row="0"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                    <StackPanel HorizontalAlignment="Stretch">
+                        <Rectangle
+                            Grid.Row="0"
+                            Height="25"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            Fill="#009BFF" />
+                        <Rectangle
+                            Grid.Row="1"
+                            Height="25"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            Fill="#FFD500" />
+                    </StackPanel>
+                </Grid>
+
+                <Viewbox MaxHeight="60">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{DynamicResource Constantine}"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="Black"
+                        Text="{i18n:Localize NoWar}"
+                        TextWrapping="NoWrap" />
+                </Viewbox>
+            </Grid>
+
+
+
+
+            <Grid Margin="10,10,10,60" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,30"
+                    VerticalAlignment="Center">
+                    <TextBlock FontSize="26" Text="{i18n:Localize NewProgect}" />
+
+                    <Grid
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Left"
+                        ColumnDefinitions="*"
+                        RowDefinitions="Auto, Auto"
+                        ShowGridLines="False">
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Text="{i18n:Localize AboutProg_Description}" />
+
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="0" BorderThickness="1"
+                            Width="180"
+                            Margin="35,10,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalContentAlignment="Center"
+                            FontSize="14"
+                            Text="flacforever@mail.ru">
+                            <TextBox.InnerRightContent>
+                                <Button
+                                    Width="27"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    Command="{Binding BtnClick}"
+                                    CommandParameter="mailto:flacforever@mail.ru?subject=Предложение работы">
+                                    <DrawingPresenter
+                                        Width="23"
+                                        Margin="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Drawing="{StaticResource ExternalLinkAlt}" />
+                                </Button>
+                            </TextBox.InnerRightContent>
+                        </TextBox>
+                    </Grid>
+                </StackPanel>
+
+
+
+				<StackPanel
+	                Grid.Row="1"
+	                Margin="0,30,0,30"
+	                VerticalAlignment="Center">
+
+
+					<TextBlock FontSize="26" Text="{i18n:Localize About_TabTitle2}" />
+
+					<DockPanel Margin="0,10,0,0">
+						
+						<TextBlock FontSize="20" Text="•" />
+						
+						<StackPanel Orientation="Vertical">
+							
+							<StackPanel Margin="5,0,0,0" Orientation="Horizontal">
+								<TextBlock Text="Yohann Nicolas" FontWeight="Bold" />
+								<TextBlock Text=", " />
+								<TextBlock Text="{i18n:Localize ThanksYohannNicolas}" />
+							</StackPanel>
+							
+							<Button Classes="LinkButton" Content="http://plugy.free.fr/en/index.html">
+								<Button.ContextMenu>
+									<ContextMenu>
+										<MenuItem />
+									</ContextMenu>
+								</Button.ContextMenu>
+							</Button>
+							
+						</StackPanel>
+					</DockPanel>
+
+					<DockPanel Margin="0,10,0,0">
+						<TextBlock FontSize="20" Text="•" />
+						<StackPanel Margin="5,0,0,0" Orientation="Horizontal">
+							<TextBlock Text="kambala" FontWeight="Bold" />
+							<TextBlock Text=", " />
+							<TextBlock Text="{i18n:Localize ThanksKambala}" />
+						</StackPanel>
+					</DockPanel>
+
+					<DockPanel Margin="0,10,0,0">
+						<TextBlock FontSize="20" Text="•" />
+						<StackPanel Margin="5,0,0,0" Orientation="Horizontal">
+							<TextBlock Text="David" FontWeight="Bold" />
+							<TextBlock Text=", " />
+							<TextBlock Text="{i18n:Localize ThanksDavid}" />
+						</StackPanel>
+					</DockPanel>
+
+				</StackPanel>
+
+
+
+
+				<StackPanel
+                    Grid.Row="2"
+                    Margin="0,30,0,30"
+                    VerticalAlignment="Center">
+
+
+                    <TextBlock FontSize="26" Text="{i18n:Localize About_TabTitle3}" />
+
+					<DockPanel Margin="0,10,0,0">
+						<TextBlock FontSize="20" Text="•" />
+						<StackPanel Orientation="Vertical">
+							<TextBlock Margin="5,0,0,0" Text="{i18n:Localize About_AvaloniaUI}" />
+							<Button Classes="LinkButton" Content="https://avaloniaui.net/">
+
+								<Button.ContextMenu>
+									<ContextMenu>
+										<MenuItem />
+									</ContextMenu>
+								</Button.ContextMenu>
+
+							</Button>
+						</StackPanel>
+					</DockPanel>
+
+					<DockPanel Margin="0,10,0,0">
+						<TextBlock FontSize="20" Text="•" />
+						<StackPanel Orientation="Vertical">
+							<TextBlock Margin="5,0,0,0" Text="{i18n:Localize About_JsonNET}" />
+							<Button Classes="LinkButton" Content="https://www.newtonsoft.com/json">
+
+								<Button.ContextMenu>
+									<ContextMenu>
+										<MenuItem />
+									</ContextMenu>
+								</Button.ContextMenu>
+
+							</Button>
+						</StackPanel>
+					</DockPanel>
+
+                    <DockPanel Margin="0,10,0,0">
+                        <TextBlock FontSize="20" Text="•" />
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Margin="5,0,0,0" Text="{i18n:Localize FontNotoSans}" />
+                            <Button Classes="LinkButton" Content="https://fonts.google.com/noto/specimen/Noto+Sans">
+
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <DockPanel Margin="0,10,0,0">
+                        <TextBlock FontSize="20" Text="•" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{i18n:Localize FontConstantine}" />
+                    </DockPanel>
+
+                </StackPanel>
+
+            </Grid>
+
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

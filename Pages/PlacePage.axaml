@@ -1,0 +1,787 @@
+<UserControl
+    x:Class="PlugY_Configurator_Avalonia.Pages.PlacePage"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i18n="clr-namespace:AvaloniaLocalizationExample.Localizer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="750"
+    d:DesignWidth="1500"
+    mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <Style Selector="NumericUpDown">
+            <Setter Property="Margin" Value="10,1.5" />
+            <Setter Property="Minimum" Value="-1" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
+        <Style Selector="MenuItem">
+            <Setter Property="Command" Value="{Binding BtnDefaultClick}" />
+            <Setter Property="CommandParameter" Value="{Binding $parent[2].Name}" />
+            <Setter Property="Header" Value="{i18n:Localize MenuDifault}" />
+        </Style>
+    </UserControl.Styles>
+
+
+    <ScrollViewer
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        AllowAutoHide="False"
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Disabled">
+        <WrapPanel Margin="0,0,0,40" Orientation="Vertical">
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize WINDOWED}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="WINDOWED__Maximized"
+                        Content="{i18n:Localize Maximized}"
+                        IsChecked="{Binding Maximized}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <CheckBox
+                        Name="WINDOWED__ActiveWindowed"
+                        Content="{i18n:Localize ActiveWindowed}"
+                        IsChecked="{Binding ActiveWindowed}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <StackPanel
+                        Name="WINDOWED__RemoveBorder"
+                        Margin="0"
+                        IsEnabled="{Binding ActiveWindowed}">
+                        <CheckBox Content="{i18n:Localize RemoveBorder}" IsChecked="{Binding RemoveBorder}">
+                            <CheckBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </CheckBox.ContextMenu>
+                        </CheckBox>
+
+                        <CheckBox
+                            Name="WINDOWED__WindowOnTop"
+                            Content="{i18n:Localize WindowOnTop}"
+                            IsChecked="{Binding WindowOnTop}">
+                            <CheckBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </CheckBox.ContextMenu>
+                        </CheckBox>
+
+
+                        <CheckBox
+                            Name="WINDOWED__LockMouseOnStartup"
+                            Content="{i18n:Localize LockMouseOnStartup}"
+                            IsChecked="{Binding LockMouseOnStartup}">
+                            <CheckBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </CheckBox.ContextMenu>
+                        </CheckBox>
+
+                        <CheckBox
+                            Name="WINDOWED__SetWindowPos"
+                            Content="{i18n:Localize SetWindowPos}"
+                            IsChecked="{Binding SetWindowPos}"
+                            ToolTip.Tip="{i18n:Localize Notes0}">
+                            <CheckBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </CheckBox.ContextMenu>
+                        </CheckBox>
+
+                        <DockPanel
+                            Name="WINDOWED__WindowedX"
+                            IsEnabled="{Binding SetWindowPos}"
+                            ToolTip.Tip="{i18n:Localize Notes0}">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+
+                            <TextBlock Text="{i18n:Localize WindowedX}" />
+                            <NumericUpDown Value="{Binding WindowedX}" />
+                        </DockPanel>
+
+                        <DockPanel
+                            Name="WINDOWED__WindowedY"
+                            IsEnabled="{Binding SetWindowPos}"
+                            ToolTip.Tip="{i18n:Localize Notes0}">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+
+                            <TextBlock Text="{i18n:Localize WindowedY}" />
+                            <NumericUpDown Value="{Binding WindowedY}" />
+                        </DockPanel>
+
+                        <DockPanel Name="WINDOWED__WindowedWidth" IsEnabled="{Binding SetWindowPos}">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+
+                            <TextBlock Text="{i18n:Localize WindowedWidth}" />
+                            <NumericUpDown Value="{Binding WindowedWidth}" />
+                        </DockPanel>
+
+                        <DockPanel Name="WINDOWED__WindowedHeight" IsEnabled="{Binding SetWindowPos}">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+
+                            <TextBlock Text="{i18n:Localize WindowedHeight}" />
+                            <NumericUpDown Value="{Binding WindowedHeight}" />
+                        </DockPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize UBER_QUEST}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <DockPanel Name="UBER_QUEST__UberMephistoX">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberMephistoX}" />
+                        <NumericUpDown Value="{Binding UberMephistoX}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberMephistoY">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberMephistoY}" />
+                        <NumericUpDown Value="{Binding UberMephistoY}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberDiabloX">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberDiabloX}" />
+                        <NumericUpDown Value="{Binding UberDiabloX}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberDiabloY">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberDiabloY}" />
+                        <NumericUpDown Value="{Binding UberDiabloY}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberBaalX">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberBaalX}" />
+                        <NumericUpDown Value="{Binding UberBaalX}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberBaalY">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberBaalY}" />
+                        <NumericUpDown Value="{Binding UberBaalY}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize UnassignSkillBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="SKILLS_POINTS__PosXUnassignSkillBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXUnassignSkillBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="SKILLS_POINTS__PosYUnassignSkillBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYUnassignSkillBtn}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize PreviousBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXPreviousBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXPreviousBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYPreviousBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYPreviousBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWPreviousBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWPreviousBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHPreviousBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHPreviousBtn}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize PageNext}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXNextBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXNextBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYNextBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYNextBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWNextBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWNextBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHNextBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHNextBtn}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize PreviousIndexBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXPreviousIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXPreviousIndexBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYPreviousIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYPreviousIndexBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWPreviousIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWPreviousIndexBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHPreviousIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHPreviousIndexBtn}" />
+                    </DockPanel>
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize NextIndexBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXNextIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXNextIndexBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYNextIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYNextIndexBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWNextIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWNextIndexBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHNextIndexBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHNextIndexBtn}" />
+                    </DockPanel>
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize SharedBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXSharedBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXSharedBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYSharedBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYSharedBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWSharedBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWSharedBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHSharedBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHSharedBtn}" />
+                    </DockPanel>
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize PutGoldBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXPutGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXPutGoldBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYPutGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYPutGoldBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWPutGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWPutGoldBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHPutGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHPutGoldBtn}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize TakeGoldBtn}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXTakeGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXTakeGoldBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYTakeGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYTakeGoldBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWTakeGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWTakeGoldBtn}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHTakeGoldBtn">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHTakeGoldBtn}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize StashNameField}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXStashNameField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXStashNameField}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYStashNameField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYStashNameField}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWStashNameField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWStashNameField}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHStashNameField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHStashNameField}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize StashGoldField}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <DockPanel Name="STASH__PosXStashGoldField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHorizontally}" />
+                        <NumericUpDown Value="{Binding PosXStashGoldField}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosYStashGoldField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosVertically}" />
+                        <NumericUpDown Value="{Binding PosYStashGoldField}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosWStashGoldField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosWidth}" />
+                        <NumericUpDown Value="{Binding PosWStashGoldField}" />
+                    </DockPanel>
+
+                    <DockPanel Name="STASH__PosHStashGoldField">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize PosHeight}" />
+                        <NumericUpDown Value="{Binding PosHStashGoldField}" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize Notes}" />
+
+                <StackPanel MaxWidth="300" Margin="10,0,0,0">
+
+                    <DockPanel Margin="0,3">
+                        <TextBlock
+                            VerticalAlignment="Top"
+                            FontSize="20"
+                            Text="•" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            Text="{i18n:Localize Notes0}"
+                            TextWrapping="Wrap" />
+                    </DockPanel>
+
+                    <DockPanel Margin="0,3">
+                        <TextBlock
+                            VerticalAlignment="Top"
+                            FontSize="20"
+                            Text="•" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            Text="{i18n:Localize Notes1}"
+                            TextWrapping="Wrap" />
+                    </DockPanel>
+
+                    <DockPanel Margin="0,3">
+                        <TextBlock
+                            VerticalAlignment="Top"
+                            FontSize="20"
+                            Text="•" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            Text="{i18n:Localize Notes2}"
+                            TextWrapping="Wrap" />
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+        </WrapPanel>
+    </ScrollViewer>
+
+</UserControl>

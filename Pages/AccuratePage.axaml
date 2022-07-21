@@ -1,0 +1,1476 @@
+<UserControl
+    x:Class="PlugY_Configurator_Avalonia.Pages.AccuratePage"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i18n="clr-namespace:AvaloniaLocalizationExample.Localizer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="750"
+    d:DesignWidth="1500"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <GeometryDrawing
+            x:Key="Material.FileSearchOutline"
+            Brush="{Binding ThemeInvertColor}"
+            Geometry="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H13C12.59,21.75 12.2,21.44 11.86,21.1C11.53,20.77 11.25,20.4 11,20H6V4H13V9H18V10.18C18.71,10.34 19.39,10.61 20,11V8L14,2M20.31,18.9C21.64,16.79 21,14 18.91,12.68C16.8,11.35 14,12 12.69,14.08C11.35,16.19 12,18.97 14.09,20.3C15.55,21.23 17.41,21.23 18.88,20.32L22,23.39L23.39,22L20.31,18.9M16.5,19A2.5,2.5 0 0,1 14,16.5A2.5,2.5 0 0,1 16.5,14A2.5,2.5 0 0,1 19,16.5A2.5,2.5 0 0,1 16.5,19Z" />
+
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="MenuItem">
+            <Setter Property="Command" Value="{Binding BtnDefaultClick}" />
+            <Setter Property="CommandParameter" Value="{Binding $parent[2].Name}" />
+            <Setter Property="Header" Value="{i18n:Localize MenuDifault}" />
+        </Style>
+
+        <Style Selector="ComboBoxItem">
+            <Setter Property="Background" Value="#252525" />
+        </Style>
+    </UserControl.Styles>
+
+
+    <ScrollViewer
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        AllowAutoHide="False"
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Disabled">
+        <WrapPanel Margin="0,0,0,40" Orientation="Vertical">
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize GENERAL}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <CheckBox
+                        Name="GENERAL__ActiveLogFile"
+                        Content="{i18n:Localize ActiveLogFile}"
+                        IsChecked="{Binding ActiveLogFile}"
+                        ToolTip.Tip="{i18n:Localize ActiveLogFile_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <CheckBox
+                        Name="GENERAL__ActiveAllOthersFeatures"
+                        Content="{i18n:Localize ActiveAllOthersFeatures}"
+                        IsChecked="{Binding ActiveAllOthersFeatures}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize LAUNCHING}" />
+
+                <StackPanel
+                    Name="LAUNCHING__Library"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <StackPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </StackPanel.ContextMenu>
+
+                    <TextBlock Text="{i18n:Localize Library}" ToolTip.Tip="{i18n:Localize Library_Hint}" />
+
+                    <TextBox
+                        MaxWidth="200"
+                        Text="{Binding Library}"
+                        ToolTip.Tip="{i18n:Localize Library_Hint}">
+                        <TextBox.InnerRightContent>
+                            <Button
+                                Padding="3"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                Command="{Binding DllToLoad_BtnClick}"
+                                CommandParameter="Library">
+
+                                <DrawingPresenter
+                                    Height="25"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Drawing="{StaticResource Material.FileSearchOutline}" />
+
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+                </StackPanel>
+
+            </StackPanel>
+
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize MAIN_SCREEN}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="MAIN_SCREEN__ActiveVersionTextChange"
+                        Content="{i18n:Localize ActiveVersionTextChange}"
+                        IsChecked="{Binding ActiveVersionTextChange}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <StackPanel Name="MAIN_SCREEN__VersionText" Orientation="Horizontal">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize VersionText}" ToolTip.Tip="{i18n:Localize VersionText_Hint}" />
+                        <TextBox
+                            MaxWidth="200"
+                            IsEnabled="{Binding ActiveVersionTextChange}"
+                            Text="{Binding VersionText}"
+                            ToolTip.Tip="{i18n:Localize VersionText_Hint}" />
+                    </StackPanel>
+
+                    <DockPanel Name="MAIN_SCREEN__ColorOfVersionText" IsEnabled="{Binding ActiveVersionTextChange}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize ColorOfVersionText}" ToolTip.Tip="{i18n:Localize ColorOfVersionText_Hint}" />
+
+                        <ComboBox
+                            MaxWidth="250"
+                            Margin="10,1.5,0,1.5"
+                            HorizontalAlignment="Left"
+                            Background="{Binding ColorOfVersionText_Background}"
+                            SelectedIndex="{Binding ColorOfVersionText, Mode=TwoWay}">
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfVersionText_Background}"
+                                    Foreground="#FBFBFB"
+                                    Text="{i18n:Localize ColorWhite}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem IsVisible="False" />
+                            <ComboBoxItem IsVisible="False" />
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfVersionText_Background}"
+                                    Foreground="#F0EDE8"
+                                    Text="{i18n:Localize ColorLightGray}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfVersionText_Background}"
+                                    Foreground="#CBCDCC"
+                                    Text="{i18n:Localize ColorGray}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem IsVisible="False" />
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfVersionText_Background}"
+                                    Foreground="#FFFFFF"
+                                    Text="{i18n:Localize ColorBrightWhite}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                            </ComboBoxItem>
+                        </ComboBox>
+
+                    </DockPanel>
+                    <CheckBox
+                        Name="MAIN_SCREEN__ActivePrintPlugYVersion"
+                        Content="{i18n:Localize ActivePrintPlugYVersion}"
+                        IsChecked="{Binding ActivePrintPlugYVersion}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+
+                    <DockPanel Name="STASH__ColorOfPlugYVersion">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock
+                            IsEnabled="{Binding ActivePrintPlugYVersion}"
+                            Text="{i18n:Localize ColorOfPlugYVersion}"
+                            ToolTip.Tip="{i18n:Localize ColorOfPlugYVersion_Hint}" />
+
+                        <ComboBox
+                            MaxWidth="250"
+                            Margin="10,1.5,0,1.5"
+                            HorizontalAlignment="Left"
+                            Background="{Binding ColorOfPlugYVersion_Background}"
+                            Foreground="Transparent"
+                            SelectedIndex="{Binding ColorOfPlugYVersion, Mode=TwoWay}">
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfPlugYVersion_Background}"
+                                    Foreground="#FBFBFB"
+                                    Text="{i18n:Localize ColorWhite}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem IsVisible="False" />
+                            <ComboBoxItem IsVisible="False" />
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfPlugYVersion_Background}"
+                                    Foreground="#F0EDE8"
+                                    Text="{i18n:Localize ColorLightGray}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfPlugYVersion_Background}"
+                                    Foreground="#CBCDCC"
+                                    Text="{i18n:Localize ColorGray}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem IsVisible="False" />
+                            <ComboBoxItem>
+                                <TextBlock
+                                    Background="{Binding ColorOfPlugYVersion_Background}"
+                                    Foreground="#FFFFFF"
+                                    Text="{i18n:Localize ColorBrightWhite}" />
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                            </ComboBoxItem>
+                        </ComboBox>
+
+
+                    </DockPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize INTERFACE}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="INTERFACE__PrintButtonsBackgroundOnMainStatsPage"
+                        Content="{i18n:Localize PrintButtonsBackgroundOnMainStatsPage}"
+                        IsChecked="{Binding PrintButtonsBackgroundOnMainStatsPage}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+                </StackPanel>
+            </StackPanel>
+
+
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize SKILLS_POINTS}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="SKILLS_POINTS__ActiveSkillsUnassignmentOneForOne"
+                        Content="{i18n:Localize ActiveSkillsUnassignmentOneForOne}"
+                        IsChecked="{Binding ActiveSkillsUnassignmentOneForOne}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+                </StackPanel>
+            </StackPanel>
+
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize EXTRA}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="EXTRA__ActiveSkillsUnassignmentOneForOne"
+                        Content="{i18n:Localize EnabledTXTFilesWhenMSExcelOpenIt}"
+                        IsChecked="{Binding EnabledTXTFilesWhenMSExcelOpenIt}"
+                        ToolTip.Tip="{i18n:Localize EnabledTXTFilesWhenMSExcelOpenIt_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+                </StackPanel>
+            </StackPanel>
+
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize SAVEPATH}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="SAVEPATH__ActiveSavePathChange"
+                        Margin="5"
+                        Content="{i18n:Localize ActiveSavePathChange}"
+                        IsChecked="{Binding ActiveSavePathChange}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <DockPanel>
+                        <TextBox
+                            MaxWidth="400"
+                            Margin="5,5,0,5"
+                            HorizontalAlignment="Stretch"
+                            IsEnabled="{Binding ActiveSavePathChange}"
+                            Text="{Binding SavePath}"
+                            ToolTip.Tip="{i18n:Localize SavePath_Hint}" />
+                    </DockPanel>
+
+                    <CheckBox
+                        Name="SAVEPATH__ActiveAutoBackup"
+                        Margin="5"
+                        Content="{i18n:Localize ActiveAutoBackup}"
+                        IsChecked="{Binding ActiveAutoBackup}"
+                        ToolTip.Tip="{i18n:Localize ActiveAutoBackup_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <StackPanel
+                        Name="SAVEPATH__MaxBackupPerCharacter"
+                        Classes="StackPanelSlave"
+                        IsEnabled="{Binding ActiveAutoBackup}"
+                        ToolTip.Tip="{i18n:Localize MaxBackupPerCharacter_Hint}">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize MaxBackupPerCharacter}" />
+                        <NumericUpDown Minimum="0" Value="{Binding MaxBackupPerCharacter}" />
+                    </StackPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize STASH}" />
+
+                <CheckBox
+                    Name="STASH__ActiveSharedStashInMultiPlayer"
+                    Content="{i18n:Localize ActiveSharedStashInMultiPlayer}"
+                    IsChecked="{Binding ActiveSharedStashInMultiPlayer}"
+                    ToolTip.Tip="{i18n:Localize ActiveSharedStashInMultiPlayer_Hint}">
+                    <CheckBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </CheckBox.ContextMenu>
+                </CheckBox>
+
+                <DockPanel Name="STASH__PersonalNormalPageColor">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock IsEnabled="{Binding PersonalNormalPageColor}" Text="{i18n:Localize PersonalNormalPageColor}" />
+                    <ComboBox
+                        Margin="0,1.5"
+                        HorizontalAlignment="Right"
+                        Background="{Binding PersonalNormalPageColor_Background}"
+                        Foreground="Transparent"
+                        SelectedIndex="{Binding PersonalNormalPageColor, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalNormalPageColor_Background}"
+                                Foreground="#FBFBFB"
+                                Text="{i18n:Localize ColorWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalNormalPageColor_Background}"
+                                Foreground="#F0EDE8"
+                                Text="{i18n:Localize ColorLightGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalNormalPageColor_Background}"
+                                Foreground="#CBCDCC"
+                                Text="{i18n:Localize ColorGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalNormalPageColor_Background}"
+                                Foreground="#FFFFFF"
+                                Text="{i18n:Localize ColorBrightWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+
+
+                </DockPanel>
+
+                <DockPanel Name="STASH__PersonalIndexPageColor">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock IsEnabled="{Binding PersonalIndexPageColor}" Text="{i18n:Localize PersonalIndexPageColor}" />
+                    <ComboBox
+                        Margin="0,1.5"
+                        HorizontalAlignment="Right"
+                        Background="{Binding PersonalIndexPageColor_Background}"
+                        Foreground="Transparent"
+                        SelectedIndex="{Binding PersonalIndexPageColor, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#FBFBFB"
+                                Text="{i18n:Localize ColorWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#F0EDE8"
+                                Text="{i18n:Localize ColorLightGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#CBCDCC"
+                                Text="{i18n:Localize ColorGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#FFFFFF"
+                                Text="{i18n:Localize ColorBrightWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                </DockPanel>
+
+                <DockPanel Name="STASH__PersonalMainIndexPageColor">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock IsEnabled="{Binding PersonalMainIndexPageColor}" Text="{i18n:Localize PersonalMainIndexPageColor}" />
+                    <ComboBox
+                        Margin="0,1.5"
+                        HorizontalAlignment="Right"
+                        Background="{Binding PersonalMainIndexPageColor_Background}"
+                        Foreground="Transparent"
+                        SelectedIndex="{Binding PersonalMainIndexPageColor, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalMainIndexPageColor_Background}"
+                                Foreground="#FBFBFB"
+                                Text="{i18n:Localize ColorWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#F0EDE8"
+                                Text="{i18n:Localize ColorLightGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#CBCDCC"
+                                Text="{i18n:Localize ColorGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding PersonalIndexPageColor_Background}"
+                                Foreground="#FFFFFF"
+                                Text="{i18n:Localize ColorBrightWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                </DockPanel>
+
+                <DockPanel Name="STASH__SharedNormalPageColor">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock IsEnabled="{Binding SharedNormalPageColor}" Text="{i18n:Localize SharedNormalPageColor}" />
+                    <ComboBox
+                        Margin="0,1.5"
+                        HorizontalAlignment="Right"
+                        Background="{Binding SharedNormalPageColor_Background}"
+                        Foreground="Transparent"
+                        SelectedIndex="{Binding SharedNormalPageColor, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedNormalPageColor_Background}"
+                                Foreground="#FBFBFB"
+                                Text="{i18n:Localize ColorWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedNormalPageColor_Background}"
+                                Foreground="#F0EDE8"
+                                Text="{i18n:Localize ColorLightGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedNormalPageColor_Background}"
+                                Foreground="#CBCDCC"
+                                Text="{i18n:Localize ColorGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedNormalPageColor_Background}"
+                                Foreground="#FFFFFF"
+                                Text="{i18n:Localize ColorBrightWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                </DockPanel>
+
+                <DockPanel Name="STASH__SharedIndexPageColor">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock IsEnabled="{Binding SharedIndexPageColor}" Text="{i18n:Localize SharedIndexPageColor}" />
+                    <ComboBox
+                        Margin="0,1.5"
+                        HorizontalAlignment="Right"
+                        Background="{Binding SharedIndexPageColor_Background}"
+                        Foreground="Transparent"
+                        SelectedIndex="{Binding SharedIndexPageColor, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedIndexPageColor_Background}"
+                                Foreground="#FBFBFB"
+                                Text="{i18n:Localize ColorWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedIndexPageColor_Background}"
+                                Foreground="#F0EDE8"
+                                Text="{i18n:Localize ColorLightGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedIndexPageColor_Background}"
+                                Foreground="#CBCDCC"
+                                Text="{i18n:Localize ColorGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedIndexPageColor_Background}"
+                                Foreground="#FFFFFF"
+                                Text="{i18n:Localize ColorBrightWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                </DockPanel>
+
+                <DockPanel Name="STASH__SharedMainIndexPageColor">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock IsEnabled="{Binding SharedMainIndexPageColor}" Text="{i18n:Localize SharedMainIndexPageColor}" />
+                    <ComboBox
+                        Margin="0,1.5"
+                        HorizontalAlignment="Right"
+                        Background="{Binding SharedMainIndexPageColor_Background}"
+                        Foreground="Transparent"
+                        SelectedIndex="{Binding SharedMainIndexPageColor, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedMainIndexPageColor_Background}"
+                                Foreground="#FBFBFB"
+                                Text="{i18n:Localize ColorWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#E7705A" Text="{i18n:Localize ColorRed}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#1FB120" Text="{i18n:Localize ColorGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#5459AB" Text="{i18n:Localize ColorBlue}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DDC5A1" Text="{i18n:Localize ColorGold}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#50524F" Text="{i18n:Localize ColorDarkGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Opacity="0.1" Text="{i18n:Localize ColorTransparent}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#959068" Text="{i18n:Localize ColorDarkYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#F1C94F" Text="{i18n:Localize ColorOrange}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#B7BA63" Text="{i18n:Localize ColorYellow}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#0D530B" Text="{i18n:Localize ColorDeepDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DF45E5" Text="{i18n:Localize ColorPurple}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedMainIndexPageColor_Background}"
+                                Foreground="#F0EDE8"
+                                Text="{i18n:Localize ColorLightGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedMainIndexPageColor_Background}"
+                                Foreground="#CBCDCC"
+                                Text="{i18n:Localize ColorGray}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsVisible="False" />
+                        <ComboBoxItem>
+                            <TextBlock
+                                Background="{Binding SharedMainIndexPageColor_Background}"
+                                Foreground="#FFFFFF"
+                                Text="{i18n:Localize ColorBrightWhite}" />
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock Foreground="#DA1212" Text="{i18n:Localize ColorCrystalRed}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                </DockPanel>
+
+                <DockPanel Name="STASH__MaxPersonnalPages" ToolTip.Tip="{i18n:Localize MaxPersonnalPages_Hint}">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock Text="{i18n:Localize MaxPersonnalPages}" />
+                    <NumericUpDown Minimum="0" Value="{Binding MaxPersonnalPages}" />
+                </DockPanel>
+
+                <DockPanel Name="STASH__MaxSharedPages" ToolTip.Tip="{i18n:Localize MaxSharedPages_Hint}">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock Text="{i18n:Localize MaxSharedPages}" />
+                    <NumericUpDown Minimum="0" Value="{Binding MaxSharedPages}" />
+                </DockPanel>
+
+                <DockPanel Name="STASH__NbPagesPerIndex" ToolTip.Tip="{i18n:Localize NbPagesPerIndex_Hint}">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock Text="{i18n:Localize NbPagesPerIndex}" />
+                    <NumericUpDown Minimum="0" Value="{Binding NbPagesPerIndex}" />
+                </DockPanel>
+
+                <DockPanel Name="STASH__NbPagesPerIndex2" ToolTip.Tip="{i18n:Localize NbPagesPerIndex2_Hint}">
+                    <DockPanel.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </DockPanel.ContextMenu>
+
+                    <TextBlock Text="{i18n:Localize NbPagesPerIndex2}" />
+                    <NumericUpDown Minimum="0" Value="{Binding NbPagesPerIndex2}" />
+                </DockPanel>
+
+                <TextBlock
+                    Name="STASH__SharedStashFilename"
+                    Margin="0,2.5,0,0"
+                    Text="{i18n:Localize SharedStashFilename}"
+                    ToolTip.Tip="{i18n:Localize SharedStashFilename_Hint}">
+                    <TextBlock.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem />
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                </TextBlock>
+                <DockPanel>
+                    <TextBox
+                        MaxWidth="450"
+                        Margin="0,1.5"
+                        HorizontalAlignment="Stretch"
+                        Text="{Binding SharedStashFilename}"
+                        ToolTip.Tip="{i18n:Localize SharedStashFilename_Hint}" />
+                </DockPanel>
+
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock
+                    Classes="Title"
+                    IsEnabled="{Binding ActiveWorldEvent}"
+                    Text="{i18n:Localize WORLD_EVENT}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="WORLD_EVENT__ShowCounterInAllDifficulty"
+                        Content="{i18n:Localize ShowCounterInAllDifficulty}"
+                        IsChecked="{Binding ShowCounterInAllDifficulty}"
+                        IsEnabled="{Binding ActiveWorldEvent}"
+                        ToolTip.Tip="{i18n:Localize ShowCounterInAllDifficulty_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <DockPanel Name="WORLD_EVENT__ItemsToSell">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize ItemsToSell}" ToolTip.Tip="{i18n:Localize ItemsToSell_Hint}" />
+                        <TextBox
+                            MaxWidth="150"
+                            Margin="10,1.5,0,1.5"
+                            HorizontalAlignment="Stretch"
+                            Text="{Binding ItemsToSell}" />
+                    </DockPanel>
+
+                    <DockPanel Name="WORLD_EVENT__MonsterID">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize MonsterID}" ToolTip.Tip="{i18n:Localize MonsterID_Hint}" />
+                        <NumericUpDown
+                            Margin="10,1.5,0,1.5"
+                            HorizontalAlignment="Right"
+                            Minimum="0"
+                            Value="{Binding MonsterID}" />
+                    </DockPanel>
+
+                    <DockPanel Name="WORLD_EVENT__OwnSOJSoldChargeFor">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize OwnSOJSoldChargeFor}" ToolTip.Tip="{i18n:Localize OwnSOJSoldChargeFor_Hint}" />
+                        <NumericUpDown Minimum="0" Value="{Binding OwnSOJSoldChargeFor}" />
+                    </DockPanel>
+
+
+                    <StackPanel Margin="0,7.5,0,3">
+                        <TextBlock Text="{i18n:Localize InititalSOJSold}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel
+                                Name="WORLD_EVENT__InititalSOJSoldMin"
+                                Grid.Column="0"
+                                HorizontalAlignment="Center">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Text="{i18n:Localize Min}" />
+                                <NumericUpDown
+                                    HorizontalAlignment="Left"
+                                    Minimum="0"
+                                    Value="{Binding InititalSOJSoldMin}" />
+                            </DockPanel>
+
+                            <DockPanel
+                                Name="WORLD_EVENT__InititalSOJSoldMax"
+                                Grid.Column="1"
+                                HorizontalAlignment="Center">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Text="{i18n:Localize Max}" />
+                                <NumericUpDown
+                                    HorizontalAlignment="Left"
+                                    Minimum="0"
+                                    Value="{Binding InititalSOJSoldMax}" />
+                            </DockPanel>
+
+                        </Grid>
+                    </StackPanel>
+
+
+                    <StackPanel Margin="0,6">
+                        <TextBlock Text="{i18n:Localize TriggerAtEachSOJSold}" ToolTip.Tip="{i18n:Localize TriggerAtEachSOJSold_Hint}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel
+                                Name="WORLD_EVENT__TriggerAtEachSOJSoldMin"
+                                Grid.Column="0"
+                                HorizontalAlignment="Center">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+
+                                <TextBlock FontSize="12" Text="{i18n:Localize Min}" />
+                                <NumericUpDown
+                                    HorizontalAlignment="Left"
+                                    Minimum="0"
+                                    Value="{Binding TriggerAtEachSOJSoldMin}" />
+                            </DockPanel>
+
+                            <DockPanel
+                                Name="WORLD_EVENT__TriggerAtEachSOJSoldMax"
+                                Grid.Column="1"
+                                HorizontalAlignment="Center">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+
+                                <TextBlock FontSize="12" Text="{i18n:Localize Max}" />
+                                <NumericUpDown
+                                    HorizontalAlignment="Left"
+                                    Minimum="0"
+                                    Value="{Binding TriggerAtEachSOJSoldMax}" />
+                            </DockPanel>
+                        </Grid>
+                    </StackPanel>
+
+
+                    <CheckBox
+                        Name="WORLD_EVENT__ActiveAutoSell"
+                        Margin="0,6"
+                        Content="{i18n:Localize ActiveAutoSell}"
+                        IsChecked="{Binding ActiveAutoSell}"
+                        ToolTip.Tip="{i18n:Localize ActiveAutoSell_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+
+                    <StackPanel Margin="0,6">
+                        <TextBlock IsEnabled="{Binding ActiveAutoSell}" Text="{i18n:Localize TimeBeforeAutoSell}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel
+                                Name="WORLD_EVENT__TimeBeforeAutoSellMin"
+                                Grid.Column="0"
+                                HorizontalAlignment="Center">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+
+                                <TextBlock FontSize="12" Text="{i18n:Localize Min}" />
+                                <NumericUpDown
+                                    HorizontalAlignment="Left"
+                                    Minimum="0"
+                                    Value="{Binding TimeBeforeAutoSellMin}" />
+                            </DockPanel>
+
+                            <DockPanel
+                                Name="WORLD_EVENT__TimeBeforeAutoSellMax"
+                                Grid.Column="1"
+                                HorizontalAlignment="Center">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+
+                                <TextBlock FontSize="12" Text="{i18n:Localize Max}" />
+                                <NumericUpDown
+                                    HorizontalAlignment="Left"
+                                    Minimum="0"
+                                    Value="{Binding TimeBeforeAutoSellMax}" />
+                            </DockPanel>
+                        </Grid>
+                    </StackPanel>
+
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize UBER_QUEST}" />
+
+                <StackPanel Margin="10,0,0,0">
+
+                    <CheckBox
+                        Name="LANGUAGE__ActiveUberMinions"
+                        Content="{i18n:Localize ActiveUberMinions}"
+                        IsChecked="{Binding ActiveUberMinions}"
+                        ToolTip.Tip="{i18n:Localize ActiveChangeLanguage_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <DockPanel Name="UBER_QUEST__UberMephistoSpawnPercent" IsEnabled="{Binding ActiveUberMinions}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberMephistoSpawnPercent}" />
+                        <NumericUpDown Value="{Binding UberMephistoSpawnPercent}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberMephistoSpawnRadius" IsEnabled="{Binding ActiveUberMinions}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberMephistoSpawnRadius}" />
+                        <NumericUpDown Value="{Binding UberMephistoSpawnRadius}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberBaalSpawnPercent" IsEnabled="{Binding ActiveUberMinions}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberBaalSpawnPercent}" />
+                        <NumericUpDown Value="{Binding UberBaalSpawnPercent}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberBaalSpawnRadius" IsEnabled="{Binding ActiveUberMinions}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberBaalSpawnRadius}" />
+                        <NumericUpDown Value="{Binding UberBaalSpawnRadius}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberDiabloSpawnPercent" IsEnabled="{Binding ActiveUberMinions}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberDiabloSpawnPercent}" />
+                        <NumericUpDown Value="{Binding UberDiabloSpawnPercent}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberDiabloSpawnRadius" IsEnabled="{Binding ActiveUberMinions}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberDiabloSpawnRadius}" />
+                        <NumericUpDown Value="{Binding UberDiabloSpawnRadius}" />
+                    </DockPanel>
+
+                    <DockPanel Name="UBER_QUEST__UberBaalChillingArmorTimer" IsEnabled="{Binding ActiveUberBaalChillingArmorTweekAI}">
+                        <DockPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </DockPanel.ContextMenu>
+
+                        <TextBlock Text="{i18n:Localize UberBaalChillingArmorTimer}" />
+                        <NumericUpDown Value="{Binding UberBaalChillingArmorTimer}" />
+                    </DockPanel>
+
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Margin="20">
+                <TextBlock Classes="Title" Text="{i18n:Localize LANGUAGE}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <CheckBox
+                        Name="LANGUAGE__ActiveChangeLanguage"
+                        Content="{i18n:Localize ActiveChangeLanguage}"
+                        IsChecked="{Binding ActiveChangeLanguage}"
+                        ToolTip.Tip="{i18n:Localize ActiveChangeLanguage_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <DockPanel IsEnabled="{Binding ActiveChangeLanguage}" ToolTip.Tip="{i18n:Localize ActiveChangeLanguage_Hint}">
+                        <TextBlock Text="{i18n:Localize SelectedLanguage}" />
+                        <ComboBox
+                            Margin="0,1.5"
+                            HorizontalAlignment="Right"
+                            SelectedIndex="{Binding SelectedLanguage, Mode=TwoWay}">
+                            <ComboBoxItem Content="{i18n:Localize LocalizationENG}" ToolTip.Tip="{i18n:Localize LocalizationENG}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationESP}" ToolTip.Tip="{i18n:Localize LocalizationESP}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationDEU}" ToolTip.Tip="{i18n:Localize LocalizationDEU}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationFRA}" ToolTip.Tip="{i18n:Localize LocalizationFRA}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationPOR}" ToolTip.Tip="{i18n:Localize LocalizationPOR}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationITA}" ToolTip.Tip="{i18n:Localize LocalizationITA}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationJPN}" ToolTip.Tip="{i18n:Localize LocalizationJPN}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationKOR}" ToolTip.Tip="{i18n:Localize LocalizationKOR}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationSIN}" ToolTip.Tip="{i18n:Localize LocalizationSIN}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationCHI}" ToolTip.Tip="{i18n:Localize LocalizationCHI}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationPOL}" ToolTip.Tip="{i18n:Localize LocalizationPOL}" />
+                            <ComboBoxItem Content="{i18n:Localize LocalizationRUS}" ToolTip.Tip="{i18n:Localize LocalizationRUS}" />
+                        </ComboBox>
+                    </DockPanel>
+
+                    <CheckBox
+                        Name="LANGUAGE__ActiveLanguageManagement"
+                        Content="{i18n:Localize ActiveLanguageManagement}"
+                        IsChecked="{Binding ActiveLanguageManagement}"
+                        ToolTip.Tip="{i18n:Localize ActiveLanguageManagement_Hint}">
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem />
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+
+                    <StackPanel
+                        MaxWidth="400"
+                        Margin="1.5"
+                        IsEnabled="{Binding ActiveLanguageManagement}"
+                        Orientation="Vertical">
+
+                        <TextBlock Text="{i18n:Localize AvailableLanguages}" ToolTip.Tip="{i18n:Localize AvailableLanguages_Hint}" />
+
+                        <ScrollViewer
+                            Margin="0,7"
+                            AllowAutoHide="False"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="0,0,0,17" Orientation="Horizontal">
+                                <ToggleButton Content="ENG" IsChecked="{Binding AvlblLngs_ENG}" />
+                                <ToggleButton Content="ESP" IsChecked="{Binding AvlblLngs_ESP}" />
+                                <ToggleButton Content="DEU" IsChecked="{Binding AvlblLngs_DEU}" />
+                                <ToggleButton Content="FRA" IsChecked="{Binding AvlblLngs_FRA}" />
+                                <ToggleButton Content="POR" IsChecked="{Binding AvlblLngs_POR}" />
+                                <ToggleButton Content="ITA" IsChecked="{Binding AvlblLngs_ITA}" />
+                                <ToggleButton Content="JPN" IsChecked="{Binding AvlblLngs_JPN}" />
+                                <ToggleButton Content="KOR" IsChecked="{Binding AvlblLngs_KOR}" />
+                                <ToggleButton Content="SIN" IsChecked="{Binding AvlblLngs_SIN}" />
+                                <ToggleButton Content="CHI" IsChecked="{Binding AvlblLngs_CHI}" />
+                                <ToggleButton Content="POL" IsChecked="{Binding AvlblLngs_POL}" />
+                                <ToggleButton Content="RUS" IsChecked="{Binding AvlblLngs_RUS}" />
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <DockPanel IsEnabled="{Binding ActiveLanguageManagement}" ToolTip.Tip="{i18n:Localize DefaultLanguage_Hint}">
+                            <TextBlock Text="{i18n:Localize DefaultLanguage}" />
+                            <ComboBox
+                                Margin="0,1.5"
+                                HorizontalAlignment="Right"
+                                SelectedIndex="{Binding DefaultLanguage, Mode=TwoWay}">
+                                <ComboBoxItem Content="{i18n:Localize LocalizationENG}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationESP}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationDEU}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationFRA}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationPOR}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationITA}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationJPN}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationKOR}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationSIN}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationCHI}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationPOL}" />
+                                <ComboBoxItem Content="{i18n:Localize LocalizationRUS}" />
+                            </ComboBox>
+                        </DockPanel>
+
+                    </StackPanel>
+
+                </StackPanel>
+            </StackPanel>
+
+
+        </WrapPanel>
+    </ScrollViewer>
+
+</UserControl>

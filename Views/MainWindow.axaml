@@ -1,0 +1,249 @@
+<Window
+    x:Class="PlugY_Configurator_Avalonia.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i18n="clr-namespace:AvaloniaLocalizationExample.Localizer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:PlugY_Configurator_Avalonia.Pages"
+    xmlns:vm="using:PlugY_Configurator_Avalonia.ViewModels"
+    Title="{Binding PlugyFullPath, Mode=OneWay}"
+    Width="{Binding WindowWidth, Mode=TwoWay}"
+    Height="{Binding WindowHeight, Mode=TwoWay}"
+    MinWidth="1240"
+    MinHeight="640"
+    d:DesignHeight="640"
+    d:DesignWidth="1240"
+    Background="{Binding ThemeBackgroundColor}"
+    DragDrop.AllowDrop="True"
+    DragDropEnum="{Binding DragDrop, Mode=TwoWay}"
+    Icon="/Assets/Images/Icon.ico"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Window.Resources>
+        <GeometryDrawing
+            x:Key="IconUnicons.Sun"
+            Brush="{Binding ThemeInvertColor}"
+            Geometry="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+
+        <GeometryDrawing
+            x:Key="Material.FileFindOutline"
+            Brush="{Binding ThemeInvertColor}"
+            Geometry="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M6,4H13L18,9V17.58L16.16,15.74C17.44,13.8 17.23,11.17 15.5,9.46C14.55,8.5 13.28,8 12,8C10.72,8 9.45,8.5 8.47,9.46C6.5,11.41 6.5,14.57 8.47,16.5C9.44,17.5 10.72,17.97 12,17.97C12.96,17.97 13.92,17.69 14.75,17.14L17.6,20H6V4M14.11,15.1C13.55,15.66 12.8,16 12,16C11.2,16 10.45,15.67 9.89,15.1C9.33,14.54 9,13.79 9,13C9,12.19 9.32,11.44 9.89,10.88C10.45,10.31 11.2,10 12,10C12.8,10 13.55,10.31 14.11,10.88C14.67,11.44 15,12.19 15,13C15,13.79 14.68,14.54 14.11,15.1Z" />
+
+        <GeometryDrawing
+            x:Key="Material.FileFindOutline1"
+            Brush="{Binding ThemeInvertColor}"
+            Geometry="M0 2A2 2 0 0 1 2 0H6V2H2V6H0V2M24 22A2 2 0 0 1 22 24H18V22H22V18H24V22M2 24A2 2 0 0 1 0 22V18H2V22H6V24H2M22 0A2 2 0 0 1 24 2V6H22V2H18V0H22Z" />
+
+    </Window.Resources>
+
+    <Window.Styles>
+
+        <Style Selector="TabControl[IsEnabled=False]">
+            <Style.Animations>
+                <Animation
+                    Easing="SineEaseInOut"
+                    FillMode="Forward"
+                    Duration="0:0:2">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        <Style Selector="TabControl[IsEnabled=True]">
+            <Style.Animations>
+                <Animation
+                    Easing="SineEaseInOut"
+                    FillMode="Forward"
+                    Duration="0:0:1">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <Style Selector="TabItem[IsSelected=True] > Border">
+            <Style.Animations>
+                <Animation
+                    Easing="SineEaseInOut"
+                    FillMode="None"
+                    Duration="0:0:0.3">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.0" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <Style Selector="StackPanel.StackPanelSlave">
+            <Setter Property="Margin" Value="30,0,0,0" />
+            <Setter Property="Orientation" Value="Horizontal" />
+        </Style>
+
+        <Style Selector="StackPanel.StackPanelNotSlave">
+            <Setter Property="Margin" Value="0,0,0,0" />
+            <Setter Property="Orientation" Value="Horizontal" />
+        </Style>
+
+    </Window.Styles>
+
+    <Grid Margin="0,0,0,0">
+
+        <TabControl
+            Margin="0,0,0,0"
+            IsEnabled="{Binding !MsgBox_Visab}"
+            TabStripPlacement="Top">
+
+
+            <TabItem
+                IsEnabled="{Binding MainTab_Visab}"
+                IsSelected="{Binding MainTab_Selected, Mode=TwoWay}"
+                Opacity="{Binding MainTab_Visab}">
+                <TabItem.Header>
+                    <TextBlock FontSize="20" Text="{i18n:Localize MainTab1Name}" />
+                </TabItem.Header>
+                <pages:MainPage Margin="0,0,0,0" />
+            </TabItem>
+
+
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock FontSize="20" Text="{i18n:Localize MainTab2Name}" />
+                </TabItem.Header>
+                <pages:AccuratePage Margin="0,0,0,0" />
+            </TabItem>
+
+
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock FontSize="20" Text="{i18n:Localize MainTab3Name}" />
+                </TabItem.Header>
+                <pages:PlacePage Margin="0,0,0,0" />
+            </TabItem>
+
+            <TabItem HorizontalAlignment="Center" IsSelected="{Binding AboutTab_Selected, Mode=TwoWay}">
+                <TabItem.Header>
+                    <TextBlock FontSize="20" Text="{i18n:Localize AboutProg}" />
+                </TabItem.Header>
+
+                <Border BorderBrush="{StaticResource SystemAccentColor}" BorderThickness="0,1,0,0">
+                    <pages:AboutPage Margin="0,0,0,0" />
+                </Border>
+            </TabItem>
+
+
+        </TabControl>
+
+        <pages:MsgBoxPage Margin="0,0,0,0" IsVisible="{Binding MsgBox_Visab}" />
+
+
+        <StackPanel
+            Margin="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+
+            <Button
+                Width="25"
+                Height="30"
+                Margin="10,0"
+                Padding="3"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Transparent"
+                Command="{Binding PlugYRefresh_ClickAsync}"
+                IsEnabled="{Binding !MsgBox_Visab}"
+                ToolTip.Tip="{i18n:Localize PlugYiniNotFound_Question}">
+
+                <DrawingPresenter
+                    Width="20"
+                    Height="22"
+                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Drawing="{StaticResource Material.FileFindOutline}" />
+
+            </Button>
+
+            <TextBlock Text="|" />
+
+            <Button
+                Width="25"
+                Height="25"
+                Margin="10,0"
+                Padding="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Transparent"
+                Command="{Binding PlugYDefault_BtnClick}"
+                IsEnabled="{Binding !MsgBox_Visab}"
+                ToolTip.Tip="{i18n:Localize DlgDifaultPlugYIni_Title}">
+
+                <DrawingPresenter
+                    Width="25"
+                    Height="25"
+                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Drawing="{StaticResource Material.FileFindOutline1}" />
+
+            </Button>
+
+            <TextBlock Text="|" />
+
+            <ToggleSwitch
+                Margin="10"
+                IsChecked="{Binding DarkThemeGUI}"
+                IsVisible="True"
+                ToolTip.Tip="{i18n:Localize ColorGUI_Title}">
+                <ToggleSwitch.OnContent>
+                    <DrawingPresenter
+                        Width="23"
+                        Margin="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Drawing="{StaticResource IconUnicons.Sun}"
+                        ToolTip.Tip="{i18n:Localize ColorGUI_Light}" />
+                </ToggleSwitch.OnContent>
+                <ToggleSwitch.OffContent>
+                    <DrawingPresenter
+                        Width="23"
+                        Margin="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Drawing="{StaticResource IconUnicons.Sun}"
+                        ToolTip.Tip="{i18n:Localize ColorGUI_Dark}" />
+                </ToggleSwitch.OffContent>
+            </ToggleSwitch>
+
+            <TextBlock Text="|" />
+
+            <ComboBox
+                Margin="10"
+                Items="{Binding CmbBoxLng_Items}"
+                PlaceholderText="Language"
+                SelectedIndex="-1"
+                SelectedItem="{Binding CmbBoxLng_Slctd}"
+                ToolTip.Tip="{i18n:Localize LngThisProg}" />
+        </StackPanel>
+
+    </Grid>
+
+</Window>
