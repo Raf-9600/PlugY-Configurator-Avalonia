@@ -1,6 +1,6 @@
 {
     "AboutProg": "Über das Programm",
-    "AboutProg_Description": "Ich nehme Aufträge zur Erstellung von Programmen und zum Umpacken von Spielen an. Kooperationsangebote bitte per E-Mail (bitte nur auf Russisch).",
+    "AboutProg_Description": "Ich nehme Aufträge zur Erstellung von Programmen. Kooperationsangebote bitte per E-Mail (bitte nur auf Russisch).",
     "About_TabTitle1": "Autor",
     "About_TabTitle2": "Besonderer Dank",
     "About_TabTitle3": "Genutzte Werke",
@@ -309,5 +309,6 @@
     "UberBaalSpawnPercent": "Prozentuale Chance, dass Uber Baal einen Minion beschwört",
     "UberBaalSpawnRadius": "Umkreis um Uber Baal, in dem der Minion erscheint",
     "UberDiabloSpawnPercent": "Prozentuale Chance, dass Uber Diablo einen Minion beschwört",
-    "UberDiabloSpawnRadius": "Umkreis um Uber Diablo, in dem der Minion erscheint"
+    "UberDiabloSpawnRadius": "Umkreis um Uber Diablo, in dem der Minion erscheint",
+    "HomePage": "Startseite"
 }

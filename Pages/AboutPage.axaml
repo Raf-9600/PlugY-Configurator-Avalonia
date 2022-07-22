@@ -125,6 +125,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+					<RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
 
@@ -156,14 +157,14 @@
                             HorizontalAlignment="Left"
                             VerticalContentAlignment="Center"
                             FontSize="14"
-                            Text="flacforever@mail.ru">
+                            Text="Raf9600@GMail.com">
                             <TextBox.InnerRightContent>
                                 <Button
                                     Width="27"
                                     VerticalAlignment="Center"
                                     Background="Transparent"
                                     Command="{Binding BtnClick}"
-                                    CommandParameter="mailto:flacforever@mail.ru?subject=Предложение работы">
+                                    CommandParameter="mailto:Raf9600@GMail.com?subject=Предложение работы">
                                     <DrawingPresenter
                                         Width="23"
                                         Margin="0"
@@ -177,9 +178,27 @@
                 </StackPanel>
 
 
+				<StackPanel
+	Grid.Row="1"
+	Margin="0,30"
+	VerticalAlignment="Center">
+					<TextBlock FontSize="26" Text="Домашняя страница" />
+
+					<Button  Margin="0,10,0,0" Classes="LinkButton" FontSize="14" Content="https://github.com/Raf-9600/PlugY-Configurator-Avalonia">
+
+						<Button.ContextMenu>
+							<ContextMenu>
+								<MenuItem />
+							</ContextMenu>
+						</Button.ContextMenu>
+
+					</Button>
+					
+				</StackPanel>
+
 
 				<StackPanel
-	                Grid.Row="1"
+	                Grid.Row="2"
 	                Margin="0,30,0,30"
 	                VerticalAlignment="Center">
 
@@ -233,7 +252,7 @@
 
 
 				<StackPanel
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Margin="0,30,0,30"
                     VerticalAlignment="Center">
 

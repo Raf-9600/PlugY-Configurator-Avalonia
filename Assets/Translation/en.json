@@ -1,8 +1,8 @@
 {
     "AboutProg": "About",
-    "AboutProg_Description": "I'm open to developing software and creating game repacks. Please send business offers to the email.",
+    "AboutProg_Description": "I'm open to developing software. Please send business offers to the email.",
     "About_TabTitle1": "Author",
-    "About_TabTitle2": "Credits",
+    "About_TabTitle2": "Thanks",
     "About_TabTitle3": "Used",
     "Act1": "One (character level 1)",
     "Act2": "Two (character level 16)",
@@ -310,5 +310,6 @@
     "UberBaalSpawnRadius": "Über Baal minion spawn radius",
     "UberDiabloSpawnPercent": "% chance that Über Diablo summons a minion",
     "UberDiabloSpawnRadius": "Über Diablo minion spawn radius",
-    "UberBaalChillingArmorTimer": "Über Baal Chilling Armor cast delay"
+    "UberBaalChillingArmorTimer": "Über Baal Chilling Armor cast delay",
+    "HomePage": "Homepage"
 }
