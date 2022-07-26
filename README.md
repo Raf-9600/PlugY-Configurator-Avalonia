@@ -1,3 +1,5 @@
+![Stand With Ukraine](https://raw.githubusercontent.com/Raf-9600/PlugY-Configurator-Avalonia/master/Ukraine.svg)
+
 # PlugY Configurator Avalonia
 PlugY Configurator with AvaloniaUI
 
