@@ -35,6 +35,13 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         [DataMember]
         [JsonProperty("Path to PlugY")]
+        private string _plugyFullPathJson;
+        public string PlugyFullPathJson
+        {
+            get => _plugyFullPathJson;
+            set { this.RaiseAndSetIfChanged(ref _plugyFullPathJson, value); }
+        }
+
         private string _plugyFullPath;
         public string PlugyFullPath
         {
@@ -49,6 +56,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.Initialization(value);
                     Upd();
                     _ini.NotSet = false;
+                    PlugyFullPathJson = value;
                 }
                 this.RaiseAndSetIfChanged(ref _plugyFullPath, value);
             }
@@ -419,7 +427,6 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     JsonDocument? post = JsonDocument.Parse(fs);
                     try
                     {
-
                         workFile = post.RootElement.GetProperty("Path to PlugY").GetString() ?? string.Empty;
                     }
                     catch (System.Exception)
