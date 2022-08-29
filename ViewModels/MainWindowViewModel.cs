@@ -348,7 +348,6 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         {
             if (App.FirstStart)
             {
-                EnabDarkThemeGUI(_model.DetectDarkTheme() ?? true);
                 switch (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName)
                 {
                     case "en":

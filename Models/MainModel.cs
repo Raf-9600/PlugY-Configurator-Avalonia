@@ -22,6 +22,7 @@ namespace PlugY_Configurator_Avalonia.Models
     class MainModel
     {
         OperatingSystemType _detectedOS = AvaloniaLocator.Current.GetService<IRuntimePlatform>().GetRuntimeInfo().OperatingSystem;
+        /*
         public string UrlNewVer;
         public async Task<bool> UpdateFind()
         {
@@ -219,7 +220,7 @@ namespace PlugY_Configurator_Avalonia.Models
             if (wait)
                 prc.WaitForExit();
         }
-
+        */
 
 
 
@@ -254,18 +255,6 @@ namespace PlugY_Configurator_Avalonia.Models
                 return setpPath;
 
             return string.Empty;
-        }
-
-        public bool DetectLightTheme()
-        {
-#pragma warning disable CA1416 // Проверка совместимости платформы
-            if (_detectedOS == OperatingSystemType.WinNT)
-                using (RegistryKey? regHKCU = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", false))
-                    if (regHKCU != null)
-                        return Convert.ToBoolean(regHKCU.GetValue("AppsUseLightTheme"));
-#pragma warning restore CA1416 // Проверка совместимости платформы
-
-            return true;
         }
 
 
