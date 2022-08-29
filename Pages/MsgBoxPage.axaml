@@ -91,7 +91,8 @@
                                 DockPanel.Dock="Bottom"
                                 IsVisible="{Binding MsgBox_ComboBox_Visab}"
                                 Items="{Binding MsgBox_ComboBox_Item, Mode=TwoWay}"
-                                SelectedIndex="{Binding MsgBox_ComboBox_Index, Mode=TwoWay}" />
+                                SelectedIndex="{Binding MsgBox_ComboBox_Index, Mode=TwoWay}"
+                                SelectedItem="{Binding MsgBox_ComboBox_Item, Mode=TwoWay}" />
                             <TextBox
                                 Name="TxtBx"
                                 Margin="0,10,0,0"

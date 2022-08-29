@@ -24,6 +24,7 @@ using Microsoft.Win32;
 using DynamicData;
 using System.Reflection;
 using Avalonia.Markup.Xaml.Styling;
+using System.Globalization;
 
 namespace PlugY_Configurator_Avalonia.ViewModels
 {
@@ -346,54 +347,32 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         private async void MainWindowViewModelAsync()
         {
-            if (App.FirstStart)
+            //if (App.FirstStart)
             {
-                switch (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName)
+                bool setLng = false;
+                foreach (var item in CmbBoxLng_DictItms)
                 {
-                    case "en":
-                        LngGui = "English";
+                    if (item.Value == Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName)
+                    {
+                        LngGui = item.Key;
+                        setLng = true;
                         break;
-                    case "ru":
-                        LngGui = "Русский";
-                        break;
-                    case "de":
-                        LngGui = "Deutsch";
-                        break;
-                    //case "uk":
-                    //SelfLng_ukr = true;
-                    //break;
-                    default:
-                       await SelectLng();
-                        break;
+                    }
                 }
+                if (!setLng)
+                    await SelectLng();
+
 
                 async Task SelectLng()
                 {
-                    var (btnNum, cmbBxIndex) = await ShowMsgBox(message: "Select the language to use during the installation.", title: "Select Setup Language", icon: MsgBoxIcon.Help, comboBox: CmbBoxLng_Items);
-                        if (btnNum == 1)
-                        {
-                            switch (cmbBxIndex)
-                            {
-                                case -1:
-                                await SelectLng();
-                                    break;
-                                case 0:
-                                    LngGui = "English";
-                                    break;
-                                case 1:
-                                    LngGui = "Русский";
-                                    break;
-                                case 2:
-                                    LngGui = "Deutsch";
-                                    break;
-                                    //case 2:
-                                    //SelfLng_ukr = true;
-                                    //break;
-                            }
-                        }
+                    var (btnNum, cmbBxIndex, cmbBxItem) = await ShowMsgBox(message: "Select the language to use during the installation.", title: "Select Setup Language", icon: MsgBoxIcon.Help, comboBox: CmbBoxLng_DictItms.Keys.ToArray());
+                    if (btnNum == 1 && !string.IsNullOrEmpty(cmbBxItem))
+                        LngGui = cmbBxItem;
+                    else
+                        await SelectLng();
                 }
             }
-            else
+            //else
             {
                 using var fs = new FileStream(App.MainSettingsFile, FileMode.Open, FileAccess.Read);
                 JsonDocument? post = JsonDocument.Parse(fs);
@@ -489,7 +468,18 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _windowHeight, value);
         }
 
-        public ObservableCollection<string> CmbBoxLng_Items { get; set; } = new ObservableCollection<string>() { "English", "Русский", "Deutsch" };
+
+        private Dictionary<string, string> _cmbBoxLng_DictItms = new() 
+        { 
+            ["English"] = "en",
+            ["Русский"] = "ru",
+            ["Deutsch"] = "de"
+        };
+        public Dictionary<string, string> CmbBoxLng_DictItms 
+        { 
+            get => _cmbBoxLng_DictItms; 
+            set => this.RaiseAndSetIfChanged(ref _cmbBoxLng_DictItms, value); 
+        }
 
 
         private string cmbBoxLng_Slctd;
@@ -511,24 +501,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             get => cmbBoxLng_Slctd;
             set
             {
-                switch (value)
+                foreach(var item in CmbBoxLng_DictItms)
                 {
-                    case "English":
-                        Localizer.Instance.LoadLanguage("en");
-                        SelfLng_rus = false;
+                    if (value == item.Key)
+                    {
+                        Localizer.Instance.LoadLanguage(item.Value);
+                        SelfLng_rus = (value == "Русский");
                         break;
-                    case "Русский":
-                        Localizer.Instance.LoadLanguage("ru");
-                        SelfLng_rus = true;
-                        break;
-                    case "Deutsch":
-                        Localizer.Instance.LoadLanguage("de");
-                        SelfLng_rus = false;
-                        break;
-                    /* case "Українська":
-                        Localizer.Instance.LoadLanguage("uk");
-                        SelfLng_ukr = false;
-                        break; */
+                    }
                 }
 
                 this.RaiseAndSetIfChanged(ref _lngGui, value);

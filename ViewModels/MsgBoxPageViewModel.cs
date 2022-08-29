@@ -35,7 +35,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             return result;
         }
 
-        public async Task<(int btnNum, int cmbBxIndex)> ShowMsgBox(string message, string title, ObservableCollection<string> comboBox, MsgBoxIcon icon = MsgBoxIcon.Information, string btn1 = "Ok", string btn2 = "", string btn3 = "")
+        public async Task<(int btnNum, int cmbBxIndex, string cmbBxItem)> ShowMsgBox(string message, string title, string[] comboBox, MsgBoxIcon icon = MsgBoxIcon.Information, string btn1 = "Ok", string btn2 = "", string btn3 = "")
         {
             ShowMsgBoxAsync(message, title, icon, btn1, btn2, btn3, false, comboBox);
 
@@ -49,10 +49,10 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             };
 
             await Task.Run(() => wait.WaitOne());
-            return (result, MsgBox_ComboBox_Index);
+            return (result, MsgBox_ComboBox_Index, MsgBox_ComboBox_Item);
         }
 
-        private void ShowMsgBoxAsync(string message, string title = "", MsgBoxIcon icon = MsgBoxIcon.none, string btn1 = "Ok", string btn2 = "", string btn3 = "", bool showTxtBox = false, ObservableCollection<string>? comboBox = null)
+        private void ShowMsgBoxAsync(string message, string title = "", MsgBoxIcon icon = MsgBoxIcon.none, string btn1 = "Ok", string btn2 = "", string btn3 = "", bool showTxtBox = false, string[]? comboBox = null)
         {
             if (MsgClick != null)
                 foreach (Delegate d in MsgClick.GetInvocationList())
@@ -67,7 +67,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
             if (comboBox != null)
             {
-                MsgBox_ComboBox_Item = comboBox;
+                MsgBox_ComboBox_Item = string.Empty;
+                MsgBox_ComboBox_Items = new ObservableCollection<string>(comboBox);
                 MsgBox_ComboBox_Index = -1;
                 MsgBox_ComboBox_Visab = true;
             }
@@ -222,7 +223,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _msgBox_TxtBox_Txt, value);
         }
 
-        public ObservableCollection<string> MsgBox_ComboBox_Item { get; set; } = new();
+        public ObservableCollection<string> MsgBox_ComboBox_Items { get; set; } = new();
 
         private bool _msgBox_ComboBox_Visab;
         public bool MsgBox_ComboBox_Visab
@@ -236,6 +237,13 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         {
             get => _msgBox_ComboBox_Index;
             set => this.RaiseAndSetIfChanged(ref _msgBox_ComboBox_Index, value);
+        }
+
+        private string _msgBox_ComboBox_Item;
+        public string MsgBox_ComboBox_Item
+        {
+            get => _msgBox_ComboBox_Item;
+            set => this.RaiseAndSetIfChanged(ref _msgBox_ComboBox_Item, value);
         }
 
 

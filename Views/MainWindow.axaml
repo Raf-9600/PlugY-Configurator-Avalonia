@@ -237,7 +237,7 @@
 
             <ComboBox
                 Margin="10"
-                Items="{Binding CmbBoxLng_Items}"
+                Items="{Binding CmbBoxLng_DictItms.Keys}"
                 PlaceholderText="Language"
                 SelectedIndex="-1"
                 SelectedItem="{Binding CmbBoxLng_Slctd}"
