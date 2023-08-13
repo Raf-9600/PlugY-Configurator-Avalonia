@@ -1,11 +1,8 @@
-using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace PlugY_Configurator_Avalonia.ViewModels
 {
-    public class ViewModelBase : ReactiveObject
+    public class ViewModelBase : ObservableObject
     {
     }
 }

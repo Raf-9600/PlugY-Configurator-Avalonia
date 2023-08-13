@@ -7,27 +7,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
     xmlns:uc="clr-namespace:PlugY_Configurator_Avalonia.Controls"
+    xmlns:vm="using:PlugY_Configurator_Avalonia.ViewModels"
     d:DesignHeight="750"
     d:DesignWidth="1500"
+    x:CompileBindings="False"
+    x:DataType="vm:MainWindowViewModel"
     mc:Ignorable="d">
 
     <UserControl.Resources>
 
-        <GeometryDrawing
-            x:Key="Material.FileSearchOutline"
-            Brush="{Binding ThemeInvertColor}"
-            Geometry="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H13C12.59,21.75 12.2,21.44 11.86,21.1C11.53,20.77 11.25,20.4 11,20H6V4H13V9H18V10.18C18.71,10.34 19.39,10.61 20,11V8L14,2M20.31,18.9C21.64,16.79 21,14 18.91,12.68C16.8,11.35 14,12 12.69,14.08C11.35,16.19 12,18.97 14.09,20.3C15.55,21.23 17.41,21.23 18.88,20.32L22,23.39L23.39,22L20.31,18.9M16.5,19A2.5,2.5 0 0,1 14,16.5A2.5,2.5 0 0,1 16.5,14A2.5,2.5 0 0,1 19,16.5A2.5,2.5 0 0,1 16.5,19Z" />
+        <DrawingImage x:Key="Material.FileSearchOutline">
+            <DrawingImage.Drawing>
+                <GeometryDrawing Brush="{Binding ThemeInvertColor}" Geometry="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H13C12.59,21.75 12.2,21.44 11.86,21.1C11.53,20.77 11.25,20.4 11,20H6V4H13V9H18V10.18C18.71,10.34 19.39,10.61 20,11V8L14,2M20.31,18.9C21.64,16.79 21,14 18.91,12.68C16.8,11.35 14,12 12.69,14.08C11.35,16.19 12,18.97 14.09,20.3C15.55,21.23 17.41,21.23 18.88,20.32L22,23.39L23.39,22L20.31,18.9M16.5,19A2.5,2.5 0 0,1 14,16.5A2.5,2.5 0 0,1 16.5,14A2.5,2.5 0 0,1 19,16.5A2.5,2.5 0 0,1 16.5,19Z" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
 
-        <GeometryDrawing
-            x:Key="Material.ArrowBottomRightThinCircleOutline"
-            Brush="{Binding ThemeInvertColor}"
-            Geometry="M12 20.03C7.59 20.03 3.97 16.41 3.97 12C3.97 7.59 7.59 3.97 12 3.97C16.41 3.97 20.03 7.59 20.03 12C20.03 16.41 16.41 20.03 12 20.03M12 22C17.54 22 22 17.54 22 12C22 6.46 17.54 2 12 2C6.46 2 2 6.46 2 12C2 17.54 6.46 22 12 22M13.88 12.47L16 10.36V16H10.36L12.47 13.88L7.5 8.9L8.9 7.5" />
+        <DrawingImage x:Key="Material.ArrowBottomRightThinCircleOutline">
+            <DrawingImage.Drawing>
+                <GeometryDrawing Brush="{Binding ThemeInvertColor}" Geometry="M12 20.03C7.59 20.03 3.97 16.41 3.97 12C3.97 7.59 7.59 3.97 12 3.97C16.41 3.97 20.03 7.59 20.03 12C20.03 16.41 16.41 20.03 12 20.03M12 22C17.54 22 22 17.54 22 12C22 6.46 17.54 2 12 2C6.46 2 2 6.46 2 12C2 17.54 6.46 22 12 22M13.88 12.47L16 10.36V16H10.36L12.47 13.88L7.5 8.9L8.9 7.5" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
 
-        <GeometryDrawing
-            x:Key="Material.InformationVariant"
-            Brush="{Binding ThemeInvertColor}"
-            Geometry="M13.5,4A1.5,1.5 0 0,0 12,5.5A1.5,1.5 0 0,0 13.5,7A1.5,1.5 0 0,0 15,5.5A1.5,1.5 0 0,0 13.5,4M13.14,8.77C11.95,8.87 8.7,11.46 8.7,11.46C8.5,11.61 8.56,11.6 8.72,11.88C8.88,12.15 8.86,12.17 9.05,12.04C9.25,11.91 9.58,11.7 10.13,11.36C12.25,10 10.47,13.14 9.56,18.43C9.2,21.05 11.56,19.7 12.17,19.3C12.77,18.91 14.38,17.8 14.54,17.69C14.76,17.54 14.6,17.42 14.43,17.17C14.31,17 14.19,17.12 14.19,17.12C13.54,17.55 12.35,18.45 12.19,17.88C12,17.31 13.22,13.4 13.89,10.71C14,10.07 14.3,8.67 13.14,8.77Z" />
-
+        <DrawingImage x:Key="Material.InformationVariant">
+            <DrawingImage.Drawing>
+                <GeometryDrawing Brush="{Binding ThemeInvertColor}" Geometry="M13.5,4A1.5,1.5 0 0,0 12,5.5A1.5,1.5 0 0,0 13.5,7A1.5,1.5 0 0,0 15,5.5A1.5,1.5 0 0,0 13.5,4M13.14,8.77C11.95,8.87 8.7,11.46 8.7,11.46C8.5,11.61 8.56,11.6 8.72,11.88C8.88,12.15 8.86,12.17 9.05,12.04C9.25,11.91 9.58,11.7 10.13,11.36C12.25,10 10.47,13.14 9.56,18.43C9.2,21.05 11.56,19.7 12.17,19.3C12.77,18.91 14.38,17.8 14.54,17.69C14.76,17.54 14.6,17.42 14.43,17.17C14.31,17 14.19,17.12 14.19,17.12C13.54,17.55 12.35,18.45 12.19,17.88C12,17.31 13.22,13.4 13.89,10.71C14,10.07 14.3,8.67 13.14,8.77Z" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
 
     </UserControl.Resources>
 
@@ -100,29 +105,35 @@
                             IsChecked="{Binding ActiveCommands_Hint_Open, Mode=TwoWay}">
                             <Grid>
 
-                                <DrawingPresenter
+                                <Image
                                     Width="14"
-                                    Height="22" Margin="5,0,0,0"
+                                    Height="22"
+                                    Margin="5,0,0,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Stretch"
-                                    Drawing="{StaticResource Material.InformationVariant}" />
+                                    Source="{StaticResource Material.InformationVariant}" />
 
+                                <!--  StaysOpen="False"  -->
                                 <Popup
-                                    Name="ActiveCommands_Flyout" IsOpen="{Binding ActiveCommands_Hint_Open, Mode=TwoWay}"
-                                    PlacementMode="Right"
-                                    StaysOpen="False">
+                                    Name="ActiveCommands_Flyout"
+                                    IsOpen="{Binding ActiveCommands_Hint_Open, Mode=TwoWay}"
+                                    PlacementMode="Right">
                                     <Border Classes="Popup">
                                         <ScrollViewer
-                                            Width="1000" Padding="0"
+                                            Width="1000"
                                             MaxHeight="{Binding WindowHeight}"
+                                            Padding="0"
                                             AllowAutoHide="False"
                                             HorizontalScrollBarVisibility="Auto"
                                             VerticalScrollBarVisibility="Auto">
-											<DockPanel Margin="0,0,0,0" >
-												<TextBox IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                            <DockPanel Margin="0,0,0,0">
+                                                <TextBox
                                                     Width="984"
                                                     Margin="0,0,0,0"
                                                     DockPanel.Dock="Top"
+                                                    IsReadOnly="True"
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                     Text="{Binding ActiveCommands_Hint}"
                                                     TextWrapping="Wrap" />
                                             </DockPanel>
@@ -168,7 +179,7 @@
                             <TextBox
                                 Margin="5,0,0,10"
                                 HorizontalAlignment="Stretch"
-                                Text="{Binding DllToLoad}"
+                                Text="{CompiledBinding DllToLoad}"
                                 ToolTip.Tip="{i18n:Localize DllToLoad_Hint}" />
                         </ScrollViewer>
 
@@ -178,17 +189,19 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
-                            IsChecked="{Binding DllToLoad_Flyout_Open, Mode=TwoWay}">
+                            IsChecked="{CompiledBinding DllToLoad_Flyout_Open,
+                                                        Mode=TwoWay}">
                             <Grid>
 
-                                <DrawingPresenter
+                                <Image
                                     Width="22"
                                     Height="22"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
-                                    Drawing="{StaticResource Material.ArrowBottomRightThinCircleOutline}" />
+                                    Source="{StaticResource Material.ArrowBottomRightThinCircleOutline}" />
 
-                                <Popup IsOpen="{Binding DllToLoad_Flyout_Open, Mode=TwoWay}" StaysOpen="False">
+                                <!--  StaysOpen="False"  -->
+                                <Popup IsOpen="{CompiledBinding DllToLoad_Flyout_Open, Mode=TwoWay}">
                                     <Border Classes="Popup">
                                         <ScrollViewer
                                             MaxWidth="1000"
@@ -208,7 +221,8 @@
                                                     VerticalAlignment="Stretch"
                                                     AcceptsReturn="True"
                                                     DockPanel.Dock="Bottom"
-                                                    Text="{Binding DllToLoad_Flyout, Mode=TwoWay}"
+                                                    Text="{CompiledBinding DllToLoad_Flyout,
+                                                                           Mode=TwoWay}"
                                                     TextWrapping="NoWrap" />
                                             </DockPanel>
                                         </ScrollViewer>
@@ -224,14 +238,14 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
-                            Command="{Binding DllToLoad_BtnClick}"
+                            Command="{CompiledBinding DllToLoad_BtnClick}"
                             CommandParameter="DllToLoad">
 
-                            <DrawingPresenter
+                            <Image
                                 Height="25"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Drawing="{StaticResource Material.FileSearchOutline}" />
+                                Source="{StaticResource Material.FileSearchOutline}" />
                         </Button>
 
                     </StackPanel>
@@ -252,7 +266,7 @@
                             <TextBox
                                 Margin="5,0,0,10"
                                 HorizontalAlignment="Stretch"
-                                Text="{Binding DllToLoad2}"
+                                Text="{CompiledBinding DllToLoad2}"
                                 ToolTip.Tip="{i18n:Localize DllToLoad_Hint}" />
                         </ScrollViewer>
 
@@ -262,17 +276,19 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
-                            IsChecked="{Binding DllToLoad2_Flyout_Open, Mode=TwoWay}">
+                            IsChecked="{CompiledBinding DllToLoad2_Flyout_Open,
+                                                        Mode=TwoWay}">
                             <Grid>
 
-                                <DrawingPresenter
+                                <Image
                                     Width="22"
                                     Height="22"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
-                                    Drawing="{StaticResource Material.ArrowBottomRightThinCircleOutline}" />
+                                    Source="{StaticResource Material.ArrowBottomRightThinCircleOutline}" />
 
-                                <Popup IsOpen="{Binding DllToLoad2_Flyout_Open, Mode=TwoWay}" StaysOpen="False">
+                                <!--  StaysOpen="False"  -->
+                                <Popup IsOpen="{CompiledBinding DllToLoad2_Flyout_Open, Mode=TwoWay}">
                                     <Border Classes="Popup">
                                         <ScrollViewer
                                             MaxWidth="1000"
@@ -309,14 +325,14 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
-                            Command="{Binding DllToLoad_BtnClick}"
+                            Command="{CompiledBinding DllToLoad_BtnClick}"
                             CommandParameter="DllToLoad2">
 
-                            <DrawingPresenter
+                            <Image
                                 Height="25"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Drawing="{StaticResource Material.FileSearchOutline}" />
+                                Source="{StaticResource Material.FileSearchOutline}" />
 
                         </Button>
 
@@ -358,21 +374,22 @@
                                     Background="Transparent"
                                     IsChecked="{Binding Param_Flyout_Open, Mode=TwoWay}">
                                     <Grid>
-
-                                        <DrawingPresenter
+                                        <Image
                                             Height="22"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch">
-                                            <DrawingPresenter.Drawing>
-                                                <GeometryDrawing Brush="#FF000000" Geometry="M21.32,9.55l-1.89-.63.89-1.78A1,1,0,0,0,20.13,6L18,3.87a1,1,0,0,0-1.15-.19l-1.78.89-.63-1.89A1,1,0,0,0,13.5,2h-3a1,1,0,0,0-.95.68L8.92,4.57,7.14,3.68A1,1,0,0,0,6,3.87L3.87,6a1,1,0,0,0-.19,1.15l.89,1.78-1.89.63A1,1,0,0,0,2,10.5v3a1,1,0,0,0,.68.95l1.89.63-.89,1.78A1,1,0,0,0,3.87,18L6,20.13a1,1,0,0,0,1.15.19l1.78-.89.63,1.89a1,1,0,0,0,.95.68h3a1,1,0,0,0,.95-.68l.63-1.89,1.78.89A1,1,0,0,0,18,20.13L20.13,18a1,1,0,0,0,.19-1.15l-.89-1.78,1.89-.63A1,1,0,0,0,22,13.5v-3A1,1,0,0,0,21.32,9.55ZM20,12.78l-1.2.4A2,2,0,0,0,17.64,16l.57,1.14-1.1,1.1L16,17.64a2,2,0,0,0-2.79,1.16l-.4,1.2H11.22l-.4-1.2A2,2,0,0,0,8,17.64l-1.14.57-1.1-1.1L6.36,16A2,2,0,0,0,5.2,13.18L4,12.78V11.22l1.2-.4A2,2,0,0,0,6.36,8L5.79,6.89l1.1-1.1L8,6.36A2,2,0,0,0,10.82,5.2l.4-1.2h1.56l.4,1.2A2,2,0,0,0,16,6.36l1.14-.57,1.1,1.1L17.64,8a2,2,0,0,0,1.16,2.79l1.2.4ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z" />
-                                            </DrawingPresenter.Drawing>
-                                        </DrawingPresenter>
+                                            <DrawingImage>
+                                                <DrawingImage.Drawing>
+                                                    <GeometryDrawing Brush="#FF000000" Geometry="M21.32,9.55l-1.89-.63.89-1.78A1,1,0,0,0,20.13,6L18,3.87a1,1,0,0,0-1.15-.19l-1.78.89-.63-1.89A1,1,0,0,0,13.5,2h-3a1,1,0,0,0-.95.68L8.92,4.57,7.14,3.68A1,1,0,0,0,6,3.87L3.87,6a1,1,0,0,0-.19,1.15l.89,1.78-1.89.63A1,1,0,0,0,2,10.5v3a1,1,0,0,0,.68.95l1.89.63-.89,1.78A1,1,0,0,0,3.87,18L6,20.13a1,1,0,0,0,1.15.19l1.78-.89.63,1.89a1,1,0,0,0,.95.68h3a1,1,0,0,0,.95-.68l.63-1.89,1.78.89A1,1,0,0,0,18,20.13L20.13,18a1,1,0,0,0,.19-1.15l-.89-1.78,1.89-.63A1,1,0,0,0,22,13.5v-3A1,1,0,0,0,21.32,9.55ZM20,12.78l-1.2.4A2,2,0,0,0,17.64,16l.57,1.14-1.1,1.1L16,17.64a2,2,0,0,0-2.79,1.16l-.4,1.2H11.22l-.4-1.2A2,2,0,0,0,8,17.64l-1.14.57-1.1-1.1L6.36,16A2,2,0,0,0,5.2,13.18L4,12.78V11.22l1.2-.4A2,2,0,0,0,6.36,8L5.79,6.89l1.1-1.1L8,6.36A2,2,0,0,0,10.82,5.2l.4-1.2h1.56l.4,1.2A2,2,0,0,0,16,6.36l1.14-.57,1.1,1.1L17.64,8a2,2,0,0,0,1.16,2.79l1.2.4ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z" />
+                                                </DrawingImage.Drawing>
+                                            </DrawingImage>
+                                        </Image>
 
+                                        <!--  StaysOpen="False"  -->
                                         <Popup
                                             MinWidth="200"
                                             MinHeight="200"
-                                            IsOpen="{Binding Param_Flyout_Open, Mode=TwoWay}"
-                                            StaysOpen="False">
+                                            IsOpen="{Binding Param_Flyout_Open, Mode=TwoWay}">
                                             <Border Classes="Popup">
 
                                                 <StackPanel Margin="0" Orientation="Vertical">

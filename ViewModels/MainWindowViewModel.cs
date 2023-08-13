@@ -1,30 +1,23 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Platform;
-using Avalonia.Threading;
-using Newtonsoft.Json;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using AvaloniaLocalizationExample.Localizer;
-using Avalonia.Markup.Xaml;
 using System.Linq;
-using Avalonia.Themes.Fluent;
 using Avalonia.Media;
-using Microsoft.Win32;
-using DynamicData;
-using System.Reflection;
 using Avalonia.Markup.Xaml.Styling;
-using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Avalonia.Styling;
+using PlugY_Configurator_Avalonia.Models;
+using Avalonia.Controls.ApplicationLifetimes;
+using System.Collections.ObjectModel;
 
 namespace PlugY_Configurator_Avalonia.ViewModels
 {
@@ -34,16 +27,16 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         private Models.IniWork _ini = new Models.IniWork();
         private string _plugyDir = "";
 
-        [DataMember]
-        [JsonProperty("Path to PlugY")]
         private string _plugyFullPathJson;
         public string PlugyFullPathJson
         {
             get => _plugyFullPathJson;
-            set { this.RaiseAndSetIfChanged(ref _plugyFullPathJson, value); }
+            set { SetProperty(ref _plugyFullPathJson, value); }
         }
 
         private string _plugyFullPath;
+        [DataMember]
+        [AppSettings("Path to PlugY")]
         public string PlugyFullPath
         {
             get { return _plugyFullPath; }
@@ -59,7 +52,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.NotSet = false;
                     PlugyFullPathJson = value;
                 }
-                this.RaiseAndSetIfChanged(ref _plugyFullPath, value);
+                SetProperty(ref _plugyFullPath, value);
             }
         }
 
@@ -337,17 +330,27 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         public MainWindowViewModel()
         {
+            App.Desktop!.ShutdownRequested += ClosingEvent;
+
             if (App.FirstStart)
             {
                 EnabDarkThemeGUI(_model.DetectDarkTheme() ?? true);
             }
+
 
             MainWindowViewModelAsync();
         }
 
         private async void MainWindowViewModelAsync()
         {
-            //if (App.FirstStart)
+            string[] args = Environment.GetCommandLineArgs();
+            string workFile = string.Empty;
+
+            if (args.Length > 1)
+                workFile = _model.FindPlugyIni(args);
+
+
+            if (App.FirstStart)
             {
                 bool setLng = false;
                 foreach (var item in CmbBoxLng_DictItms)
@@ -363,54 +366,12 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     await SelectLng();
 
 
-                async Task SelectLng()
-                {
-                    var (btnNum, cmbBxIndex, cmbBxItem) = await ShowMsgBox(message: "Select the language to use during the installation.", title: "Select Setup Language", icon: MsgBoxIcon.Help, comboBox: CmbBoxLng_DictItms.Keys.ToArray());
-                    if (btnNum == 1 && !string.IsNullOrEmpty(cmbBxItem))
-                        LngGui = cmbBxItem;
-                    else
-                        await SelectLng();
-                }
-            }
-            //else
-            {
-                using var fs = new FileStream(App.MainSettingsFile, FileMode.Open, FileAccess.Read);
-                JsonDocument? post = JsonDocument.Parse(fs);
-
-                LngGui = post.RootElement.GetProperty("Language").GetString() ?? string.Empty;
-            }
-            //LngGui = "English";
-
-
-            try
-            {
-                string[] args = Environment.GetCommandLineArgs();
-                string workFile = string.Empty;
-
-                if (args.Length > 1)
-                    workFile = _model.FindPlugyIni(args);
-
-
-
                 if (!File.Exists(workFile))
                 {
                     workFile = _model.FindWorkDir("PlugY.ini");
                     if (!string.IsNullOrEmpty(workFile))
                         workFile = Path.Combine(workFile, "PlugY.ini");
                 }
-
-                if (!File.Exists(workFile) && !App.FirstStart)
-                {
-                    using var fs = new FileStream(App.MainSettingsFile, FileMode.Open, FileAccess.Read);
-                    JsonDocument? post = JsonDocument.Parse(fs);
-                    try
-                    {
-                        workFile = post.RootElement.GetProperty("Path to PlugY").GetString() ?? string.Empty;
-                    }
-                    catch (System.Exception)
-                    { workFile = ""; }
-                }
-                //workFile = App._mainSettings.Get().installationPath;
 
                 if (!File.Exists(workFile))
                 {
@@ -428,80 +389,105 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     {
                         await PlugYRefresh_ClickAsync(); //Dispatcher.UIThread.InvokeAsync(() => ActivePlugin = true);
                         if (!File.Exists(PlugyFullPath))
-                            App.desktop.Shutdown();
+                            App.Desktop?.Shutdown();
                         //Environment.Exit(0);
                     };
                 }
             }
-            catch (Exception e)
-            {
-                ShowMsgBoxAsync(e.Message, Localizer.Instance["Error"], MsgBoxIcon.Error);
-            }
+
+
         }
 
-        private IEnumerable<string>? _eventDrop;
-        public IEnumerable<string>? EventDrop
+        private void ClosingEvent(object? sender, ShutdownRequestedEventArgs e)
+        {
+            AppSettings.WriteSettingsFile(App.MainSettingsFile, this);
+        }
+
+        private List<string>? _eventDrop;
+        public List<string>? EventDrop
         {
             get => _eventDrop;
             set
             {
                 PlugyFullPath = _model.FindPlugyIni(value);
-                this.RaiseAndSetIfChanged(ref _eventDrop, value);
+                SetProperty(ref _eventDrop, value);
             }
         }
 
-        [DataMember]
-        [JsonProperty("WindowWidth")]
-        private double _windowWidth = 1240;
-        public double WindowWidth
+        public async Task SelectLng()
         {
-            get =>_windowWidth;
-            set => this.RaiseAndSetIfChanged(ref _windowWidth, value);
+            SelectLngBtn_Enab = false;
+            var (btnNum, _, cmbBxItem) = await ShowMsgBox(message: "Select the language to use.", title: "Select Language", icon: MsgBoxIcon.Help, comboBox: CmbBoxLng_DictItms.Keys.ToArray());
+            if (btnNum == 1 && !string.IsNullOrEmpty(cmbBxItem))
+            {
+                SelectLngBtn_Enab = true;
+                CmbBoxLng_Slctd = cmbBxItem;
+            }
+            else if (string.IsNullOrEmpty(CmbBoxLng_Slctd))
+                await SelectLng();
+            else
+                SelectLngBtn_Enab = true;
+        }
+
+        private bool _selectLngBtn_Enab = true;
+        public bool SelectLngBtn_Enab
+        {
+            get => _selectLngBtn_Enab;
+            set => SetProperty(ref _selectLngBtn_Enab, value);
         }
 
         [DataMember]
-        [JsonProperty("WindowHeight")]
+        [AppSettings("WindowWidth")]
+        private double _windowWidth = 1240;
+        public double WindowWidth
+        {
+            get => _windowWidth;
+            set => SetProperty(ref _windowWidth, value);
+        }
+
+        [DataMember]
+        [AppSettings("WindowHeight")]
         private double _windowHeight = 640;
         public double WindowHeight
         {
             get => _windowHeight;
-            set => this.RaiseAndSetIfChanged(ref _windowHeight, value);
+            set => SetProperty(ref _windowHeight, value);
         }
 
 
-        private Dictionary<string, string> _cmbBoxLng_DictItms = new() 
-        { 
+        private Dictionary<string, string> _cmbBoxLng_DictItms = new()
+        {
             ["English"] = "en",
             ["Ðóññêèé"] = "ru",
             ["Deutsch"] = "de"
         };
-        public Dictionary<string, string> CmbBoxLng_DictItms 
-        { 
-            get => _cmbBoxLng_DictItms; 
-            set => this.RaiseAndSetIfChanged(ref _cmbBoxLng_DictItms, value); 
+        public Dictionary<string, string> CmbBoxLng_DictItms
+        {
+            get => _cmbBoxLng_DictItms;
+            set => SetProperty(ref _cmbBoxLng_DictItms, value);
         }
 
 
         private string cmbBoxLng_Slctd;
+        [DataMember]
+        [AppSettings("Language")]
         public string CmbBoxLng_Slctd
         {
             get => cmbBoxLng_Slctd;
             set
             {
                 LngGui = value;
-                this.RaiseAndSetIfChanged(ref cmbBoxLng_Slctd, value);
+                SetProperty(ref cmbBoxLng_Slctd, value);
             }
         }
 
-        [DataMember]
-        [JsonProperty("Language")]
         private string _lngGui;
         public string LngGui
         {
             get => cmbBoxLng_Slctd;
             set
             {
-                foreach(var item in CmbBoxLng_DictItms)
+                foreach (var item in CmbBoxLng_DictItms)
                 {
                     if (value == item.Key)
                     {
@@ -511,7 +497,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     }
                 }
 
-                this.RaiseAndSetIfChanged(ref _lngGui, value);
+                SetProperty(ref _lngGui, value);
             }
         }
 
@@ -519,7 +505,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public bool SelfLng_rus
         {
             get => _selfLng_rus;
-            set => this.RaiseAndSetIfChanged(ref _selfLng_rus, value);
+            set => SetProperty(ref _selfLng_rus, value);
         }
 
 
@@ -534,7 +520,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         public void BtnClipboardClick(string parameter)
         {
-            Application.Current?.Clipboard?.SetTextAsync(parameter);
+            App.MainWindow.Clipboard?.SetTextAsync(parameter);
         }
 
         public void BtnDefaultClick(string parameter)
@@ -561,7 +547,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
 
 
-            
+
         }
 
 
@@ -570,18 +556,18 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush ThemeBackgroundColor
         {
             get => _themeBackgroundColor;
-            set => this.RaiseAndSetIfChanged(ref _themeBackgroundColor, value);
+            set => SetProperty(ref _themeBackgroundColor, value);
         }
 
         private SolidColorBrush _themeInvertColor = SolidColorBrush.Parse("#3F3F3F");
         public SolidColorBrush ThemeInvertColor
         {
             get => _themeInvertColor;
-            set => this.RaiseAndSetIfChanged(ref _themeInvertColor, value);
+            set => SetProperty(ref _themeInvertColor, value);
         }
 
         [DataMember]
-        [JsonProperty("DarkTheme")]
+        [AppSettings("DarkTheme")]
         private bool _darkThemeGUI;
         public bool DarkThemeGUI
         {
@@ -592,7 +578,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
             set
             {
-                this.RaiseAndSetIfChanged(ref _darkThemeGUI, value);
+                SetProperty(ref _darkThemeGUI, value);
             }
         }
 
@@ -606,13 +592,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
                 if (enab)
                 {
-                    if (App.Fluent.Mode != FluentThemeMode.Dark)
-                    {
-                        App.Fluent.Mode = FluentThemeMode.Dark;
-                    }
-                    Application.Current.Styles[0] = App.Fluent;
-                    //Application.Current.Styles[1] = App.DataGridFluent;
-
+                    Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
 
                     ThemeBackgroundColor = SolidColorBrush.Parse("#252525");
                     MsgBox_BackgroundColor = SolidColorBrush.Parse("#3F3F3F");
@@ -622,13 +602,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 }
                 else
                 {
-                    if (App.Fluent.Mode != FluentThemeMode.Light)
-                    {
-                        App.Fluent.Mode = FluentThemeMode.Light;
-                    }
-                    Application.Current.Styles[0] = App.Fluent;
-                    //Application.Current.Styles[1] = App.DataGridFluent;
-
+                    Application.Current.RequestedThemeVariant = ThemeVariant.Light;
 
                     ThemeBackgroundColor = SolidColorBrush.Parse("#FFFFFFFF");
                     MsgBox_BackgroundColor = SolidColorBrush.Parse("#fff5f5f5");
@@ -696,17 +670,13 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         public async Task PlugYRefresh_ClickAsync()
         {
-            OpenFileDialog dlg = new()
+            (string, string, string)[] filters = new (string, string, string)[]
             {
-                Title = Localizer.Instance["PlugYiniNotFound_Question"],
-                Directory = _model.FindInstalledDiablo2(), // Environment.GetFolderPath(Environment.SpecialFolder.MyComputer) // Name = Localizer.Instance["DlgFolderPlugyIni_AllIni"], Extensions = new List<string>()
-                AllowMultiple = false,
-                InitialFileName = "PlugY.ini"
+                (Localizer.Instance["DlgFolderPlugyIni_AllIni"], "*.ini", "text/plain"),
+                (Localizer.Instance["DlgFolderPlugyIni_AllFiles"], "*", "*/*")
             };
-            dlg.Filters?.Add(new FileDialogFilter() { Name = Localizer.Instance["DlgFolderPlugyIni_AllIni"], Extensions = { "ini" } });
-            dlg.Filters?.Add(new FileDialogFilter() { Name = Localizer.Instance["DlgFolderPlugyIni_AllFiles"], Extensions = { "*" } });
 
-            string[]? result = await dlg.ShowAsync(App.desktop.MainWindow);
+            var result = await MainModel.OpenFileDialog(App.MainWindow, filters, Localizer.Instance["PlugYiniNotFound_Question"], _model.FindInstalledDiablo2());
 
             if (result != null)
                 PlugyFullPath = result[0];
@@ -760,7 +730,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     GameParam_3dfx = Param.Contains("-3dfx");
                 }
 
-                this.RaiseAndSetIfChanged(ref _param_Flyout_Open, value);
+                SetProperty(ref _param_Flyout_Open, value);
             }
         }
 
@@ -771,7 +741,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (value) Param = _model.ActAddRemove(Param, "-act 1");
-                this.RaiseAndSetIfChanged(ref _act1, value);
+                SetProperty(ref _act1, value);
             }
         }
 
@@ -782,7 +752,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (value) Param = _model.ActAddRemove(Param, "-act 2");
-                this.RaiseAndSetIfChanged(ref _act2, value);
+                SetProperty(ref _act2, value);
             }
         }
 
@@ -793,7 +763,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (value) Param = _model.ActAddRemove(Param, "-act 3");
-                this.RaiseAndSetIfChanged(ref _act3, value);
+                SetProperty(ref _act3, value);
             }
         }
 
@@ -804,7 +774,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (value) Param = _model.ActAddRemove(Param, "-act 4");
-                this.RaiseAndSetIfChanged(ref _act4, value);
+                SetProperty(ref _act4, value);
             }
         }
 
@@ -815,7 +785,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (value) Param = _model.ActAddRemove(Param, "-act 5");
-                this.RaiseAndSetIfChanged(ref _act5, value);
+                SetProperty(ref _act5, value);
             }
         }
 
@@ -830,11 +800,11 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-w", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_WindowMode, value);
+                SetProperty(ref _gameParam_WindowMode, value);
 
                 if (ActiveWindowed != value)
                     ActiveWindowed = value;
-                
+
                 _model.GlideWindowed((value || ActiveWindowed) && Param.Contains("-3dfx"));
 
             }
@@ -851,7 +821,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-nofixaspect", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_nofixaspect, value);
+                SetProperty(ref _gameParam_nofixaspect, value);
             }
         }
 
@@ -866,7 +836,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-direct", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_Direct, value);
+                SetProperty(ref _gameParam_Direct, value);
             }
         }
 
@@ -879,9 +849,9 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value)
                     Param = _model.AddParam(Param, "-txt");
                 else if (!string.IsNullOrEmpty(Param))
-                     Param = Param.Replace("-txt", "");
+                    Param = Param.Replace("-txt", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_Txt, value);
+                SetProperty(ref _gameParam_Txt, value);
             }
         }
 
@@ -896,7 +866,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-ns", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_Ns, value);
+                SetProperty(ref _gameParam_Ns, value);
             }
         }
 
@@ -911,7 +881,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-sndbkg", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_sndbkg, value);
+                SetProperty(ref _gameParam_sndbkg, value);
             }
         }
 
@@ -926,7 +896,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-skiptobnet", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_skiptobnet, value);
+                SetProperty(ref _gameParam_skiptobnet, value);
             }
         }
 
@@ -940,7 +910,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-nosave", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_nosave, value);
+                SetProperty(ref _gameParam_nosave, value);
             }
         }
 
@@ -954,7 +924,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (!string.IsNullOrEmpty(Param))
                     Param = Param.Replace("-3dfx", "");
 
-                this.RaiseAndSetIfChanged(ref _gameParam_3dfx, value);
+                SetProperty(ref _gameParam_3dfx, value);
                 _model.GlideWindowed((GameParam_WindowMode || ActiveWindowed) && value);
             }
         }
@@ -979,7 +949,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 }
 
                 _ini.SetVal("LAUNCHING", "Param", value);
-                this.RaiseAndSetIfChanged(ref _param, value);
+                SetProperty(ref _param, value);
             }
         }
 
@@ -990,7 +960,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("LAUNCHING", "Library", value);
-                this.RaiseAndSetIfChanged(ref _library, value);
+                SetProperty(ref _library, value);
             }
         }
         #endregion
@@ -1004,8 +974,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             {
                 _ini.SetVal("GENERAL", "ActivePlugin", value);
 
-                //Dispatcher.UIThread.InvokeAsync(() => this.RaiseAndSetIfChanged(ref _activePlugin, value));
-                this.RaiseAndSetIfChanged(ref _activePlugin, value);
+                //Dispatcher.UIThread.InvokeAsync(() => SetProperty(ref _activePlugin, value));
+                SetProperty(ref _activePlugin, value);
             }
         }
 
@@ -1016,7 +986,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("GENERAL", "DisableBattleNet", value);
-                this.RaiseAndSetIfChanged(ref _disableBattleNet, value);
+                SetProperty(ref _disableBattleNet, value);
             }
         }
 
@@ -1027,7 +997,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("GENERAL", "ActiveLogFile", value);
-                this.RaiseAndSetIfChanged(ref _activeLogFile, value);
+                SetProperty(ref _activeLogFile, value);
             }
         }
 
@@ -1041,7 +1011,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     value.Replace('/', '\\');
 
                 _ini.SetVal("GENERAL", "DllToLoad", value);
-                this.RaiseAndSetIfChanged(ref _dllToLoad, value);
+                SetProperty(ref _dllToLoad, value);
             }
         }
 
@@ -1055,7 +1025,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     value.Replace('/', '\\');
 
                 _ini.SetVal("GENERAL", "DllToLoad2", value);
-                this.RaiseAndSetIfChanged(ref _dllToLoad2, value);
+                SetProperty(ref _dllToLoad2, value);
             }
         }
 
@@ -1063,14 +1033,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public string DllToLoad_Flyout
         {
             get { return _dllToLoad_Flyout; }
-            set { this.RaiseAndSetIfChanged(ref _dllToLoad_Flyout, value); }
+            set { SetProperty(ref _dllToLoad_Flyout, value); }
         }
 
         private string _dllToLoad2_Flyout;
         public string DllToLoad2_Flyout
         {
             get { return _dllToLoad2_Flyout; }
-            set { this.RaiseAndSetIfChanged(ref _dllToLoad2_Flyout, value); }
+            set { SetProperty(ref _dllToLoad2_Flyout, value); }
         }
 
         private bool _dllToLoad_Flyout_Open;
@@ -1084,7 +1054,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else
                     DllToLoad = DllToLoad_Flyout.Trim().Replace(Environment.NewLine, "|").Replace("||", "|");
 
-                this.RaiseAndSetIfChanged(ref _dllToLoad_Flyout_Open, value);
+                SetProperty(ref _dllToLoad_Flyout_Open, value);
             }
         }
 
@@ -1099,11 +1069,12 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else
                     DllToLoad2 = DllToLoad2_Flyout.Trim().Replace(Environment.NewLine, "|").Replace("||", "|");
 
-                this.RaiseAndSetIfChanged(ref _dllToLoad2_Flyout_Open, value);
+                SetProperty(ref _dllToLoad2_Flyout_Open, value);
             }
         }
 
-        public async void DllToLoad_BtnClick(string param)
+        [RelayCommand]
+        public async Task DllToLoad_BtnClick(string param)
         {
             string title = Localizer.Instance["SetDllForPlugy"];
             bool multiFile = true;
@@ -1113,16 +1084,12 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 multiFile = false;
             }
 
-            OpenFileDialog dlg = new()
+            (string, string, string)[] filters = new (string, string, string)[]
             {
-                Title = title,
-                Directory = _plugyDir,
-                AllowMultiple = multiFile
+                (Localizer.Instance["DlgFolderDllForPlugy"], "*.dll", "application/octet-stream"),
+                (Localizer.Instance["DlgFolderPlugyIni_AllFiles"], "*", "*/*")
             };
-            dlg.Filters?.Add(new FileDialogFilter() { Name = Localizer.Instance["DlgFolderDllForPlugy"], Extensions = { "dll" } });
-            dlg.Filters?.Add(new FileDialogFilter() { Name = Localizer.Instance["DlgFolderPlugyIni_AllFiles"], Extensions = { "*" } });
-
-            string[]? result = await dlg.ShowAsync(App.desktop.MainWindow);
+            var result = await MainModel.OpenFileDialog(App.MainWindow, filters, title, _model.FindInstalledDiablo2(), multiFile);
 
             if (result != null)
             {
@@ -1149,7 +1116,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("GENERAL", "ActiveCommands", value);
-                this.RaiseAndSetIfChanged(ref _activeCommands, value);
+                SetProperty(ref _activeCommands, value);
             }
         }
 
@@ -1157,7 +1124,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public string ActiveCommands_Hint
         {
             get { return _activeCommands_Hint; }
-            set { this.RaiseAndSetIfChanged(ref _activeCommands_Hint, value); }
+            set { SetProperty(ref _activeCommands_Hint, value); }
         }
 
         private bool _activeCommands_Hint_Open;
@@ -1174,7 +1141,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
                 return _activeCommands_Hint_Open;
             }
-            set { this.RaiseAndSetIfChanged(ref _activeCommands_Hint_Open, value); }
+            set { SetProperty(ref _activeCommands_Hint_Open, value); }
         }
 
         public void ActiveCommands_Flyout_Open()
@@ -1194,7 +1161,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("GENERAL", "ActiveCheckMemory", value);
-                this.RaiseAndSetIfChanged(ref _activeCheckMemory, value);
+                SetProperty(ref _activeCheckMemory, value);
             }
         }
 
@@ -1205,7 +1172,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("GENERAL", "ActiveAllOthersFeatures", value);
-                this.RaiseAndSetIfChanged(ref _activeAllOthersFeatures, value);
+                SetProperty(ref _activeAllOthersFeatures, value);
             }
         }
         #endregion
@@ -1218,7 +1185,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "ActiveWindowed", value);
-                this.RaiseAndSetIfChanged(ref _activeWindowed, value);
+                SetProperty(ref _activeWindowed, value);
 
                 GameParam_WindowMode = value;
             }
@@ -1231,7 +1198,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "RemoveBorder", value);
-                this.RaiseAndSetIfChanged(ref _removeBorder, value);
+                SetProperty(ref _removeBorder, value);
             }
         }
 
@@ -1242,7 +1209,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "WindowOnTop", value);
-                this.RaiseAndSetIfChanged(ref _windowOnTop, value);
+                SetProperty(ref _windowOnTop, value);
             }
         }
 
@@ -1253,7 +1220,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "Maximized", value);
-                this.RaiseAndSetIfChanged(ref _maximized, value);
+                SetProperty(ref _maximized, value);
             }
         }
 
@@ -1264,7 +1231,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "SetWindowPos", value);
-                this.RaiseAndSetIfChanged(ref _setWindowPos, value);
+                SetProperty(ref _setWindowPos, value);
             }
         }
 
@@ -1275,7 +1242,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "X", value);
-                this.RaiseAndSetIfChanged(ref _windowedX, value);
+                SetProperty(ref _windowedX, value);
             }
         }
 
@@ -1286,7 +1253,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "Y", value);
-                this.RaiseAndSetIfChanged(ref _windowedY, value);
+                SetProperty(ref _windowedY, value);
             }
         }
 
@@ -1297,7 +1264,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "Width", value);
-                this.RaiseAndSetIfChanged(ref _windowedWidth, value);
+                SetProperty(ref _windowedWidth, value);
             }
         }
 
@@ -1308,7 +1275,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "Height", value);
-                this.RaiseAndSetIfChanged(ref _windowedHeight, value);
+                SetProperty(ref _windowedHeight, value);
             }
         }
 
@@ -1319,7 +1286,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WINDOWED", "LockMouseOnStartup", value);
-                this.RaiseAndSetIfChanged(ref _lockMouseOnStartup, value);
+                SetProperty(ref _lockMouseOnStartup, value);
             }
         }
         #endregion
@@ -1334,7 +1301,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("Language", "Enabled", "ActiveChangeLanguage");
 
                 _ini.SetVal("LANGUAGE", "ActiveChangeLanguage", value);
-                this.RaiseAndSetIfChanged(ref _activeChangeLanguage, value);
+                SetProperty(ref _activeChangeLanguage, value);
             }
         }
 
@@ -1349,7 +1316,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 var result = _languageListWrite[value];
                 _ini.SetVal("LANGUAGE", "SelectedLanguage", result);
 
-                this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
+                SetProperty(ref _selectedLanguage, value);
             }
         }
 
@@ -1360,7 +1327,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("LANGUAGE", "ActiveLanguageManagement", value);
-                this.RaiseAndSetIfChanged(ref _activeLanguageManagement, value);
+                SetProperty(ref _activeLanguageManagement, value);
             }
         }
 
@@ -1376,7 +1343,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetVal("LANGUAGE", "DefaultLanguage", result);
                 }
 
-                this.RaiseAndSetIfChanged(ref _defaultLanguage, value);
+                SetProperty(ref _defaultLanguage, value);
             }
         }
 
@@ -1390,7 +1357,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("ENG");
                 else _ini.DelAvailableLanguages("ENG");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_ENG, value);
+                SetProperty(ref _avlblLngs_ENG, value);
             }
         }
 
@@ -1404,7 +1371,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("ESP");
                 else _ini.DelAvailableLanguages("ESP");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_ESP, value);
+                SetProperty(ref _avlblLngs_ESP, value);
             }
         }
 
@@ -1418,7 +1385,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("DEU");
                 else _ini.DelAvailableLanguages("DEU");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_DEU, value);
+                SetProperty(ref _avlblLngs_DEU, value);
             }
         }
 
@@ -1432,7 +1399,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("FRA");
                 else _ini.DelAvailableLanguages("FRA");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_FRA, value);
+                SetProperty(ref _avlblLngs_FRA, value);
             }
         }
 
@@ -1446,7 +1413,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("POR");
                 else _ini.DelAvailableLanguages("POR");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_POR, value);
+                SetProperty(ref _avlblLngs_POR, value);
             }
         }
 
@@ -1460,7 +1427,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("ITA");
                 else _ini.DelAvailableLanguages("ITA");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_ITA, value);
+                SetProperty(ref _avlblLngs_ITA, value);
             }
         }
 
@@ -1474,7 +1441,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("JPN");
                 else _ini.DelAvailableLanguages("JPN");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_JPN, value);
+                SetProperty(ref _avlblLngs_JPN, value);
             }
         }
 
@@ -1488,7 +1455,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("KOR");
                 else _ini.DelAvailableLanguages("KOR");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_KOR, value);
+                SetProperty(ref _avlblLngs_KOR, value);
             }
         }
 
@@ -1502,7 +1469,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("SIN");
                 else _ini.DelAvailableLanguages("SIN");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_SIN, value);
+                SetProperty(ref _avlblLngs_SIN, value);
             }
         }
 
@@ -1516,7 +1483,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("CHI");
                 else _ini.DelAvailableLanguages("CHI");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_CHI, value);
+                SetProperty(ref _avlblLngs_CHI, value);
             }
         }
 
@@ -1530,7 +1497,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("POL");
                 else _ini.DelAvailableLanguages("POL");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_POL, value);
+                SetProperty(ref _avlblLngs_POL, value);
             }
         }
 
@@ -1544,7 +1511,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     _ini.SetAvailableLanguages("RUS");
                 else _ini.DelAvailableLanguages("RUS");
 
-                this.RaiseAndSetIfChanged(ref _avlblLngs_RUS, value);
+                SetProperty(ref _avlblLngs_RUS, value);
             }
         }
         #endregion
@@ -1557,7 +1524,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SAVEPATH", "ActiveSavePathChange", value);
-                this.RaiseAndSetIfChanged(ref _activeSavePathChange, value);
+                SetProperty(ref _activeSavePathChange, value);
             }
         }
 
@@ -1568,7 +1535,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SAVEPATH", "SavePath", value);
-                this.RaiseAndSetIfChanged(ref _savePath, value);
+                SetProperty(ref _savePath, value);
             }
         }
 
@@ -1579,7 +1546,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SAVEPATH", "ActiveAutoBackup", value);
-                this.RaiseAndSetIfChanged(ref _activeAutoBackup, value);
+                SetProperty(ref _activeAutoBackup, value);
             }
         }
 
@@ -1590,7 +1557,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SAVEPATH", "MaxBackupPerCharacter", value);
-                this.RaiseAndSetIfChanged(ref _maxBackupPerCharacter, value);
+                SetProperty(ref _maxBackupPerCharacter, value);
             }
         }
         #endregion
@@ -1637,7 +1604,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("MAIN SCREEN", "ActiveVersionTextChange", value);
-                this.RaiseAndSetIfChanged(ref _activeVersionTextChange, value);
+                SetProperty(ref _activeVersionTextChange, value);
             }
         }
 
@@ -1648,7 +1615,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("MAIN SCREEN", "VersionText", value);
-                this.RaiseAndSetIfChanged(ref _versionText, value);
+                SetProperty(ref _versionText, value);
             }
         }
 
@@ -1659,15 +1626,15 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     ColorOfVersionText_Background = new SolidColorBrush(Colors.Gray);
-                else 
+                else
                     ColorOfVersionText_Background = new SolidColorBrush(Colors.Transparent);
 
 
                 _ini.SetVal("MAIN SCREEN", "ColorOfVersionText", value); //_ini.SetVal("MAIN SCREEN", "ColorOfVersionText", ColorFromNum(value));
-                this.RaiseAndSetIfChanged(ref _ñolorOfVersionText, value);
+                SetProperty(ref _ñolorOfVersionText, value);
             }
         }
 
@@ -1675,7 +1642,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush ColorOfVersionText_Background
         {
             get { return _ñolorOfVersionText_Background; }
-            set { this.RaiseAndSetIfChanged(ref _ñolorOfVersionText_Background, value); }
+            set { SetProperty(ref _ñolorOfVersionText_Background, value); }
         }
 
         private bool _activePrintPlugYVersion;
@@ -1685,7 +1652,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("MAIN SCREEN", "ActivePrintPlugYVersion", value);
-                this.RaiseAndSetIfChanged(ref _activePrintPlugYVersion, value);
+                SetProperty(ref _activePrintPlugYVersion, value);
             }
         }
 
@@ -1696,14 +1663,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     ColorOfPlugYVersion_Background = new SolidColorBrush(Colors.Gray);
                 else
                     ColorOfPlugYVersion_Background = new SolidColorBrush(Colors.Transparent);
 
                 _ini.SetVal("MAIN SCREEN", "ColorOfPlugYVersion", value);
-                this.RaiseAndSetIfChanged(ref _colorOfPlugYVersion, value);
+                SetProperty(ref _colorOfPlugYVersion, value);
             }
         }
 
@@ -1711,7 +1678,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush ColorOfPlugYVersion_Background
         {
             get { return _ñolorOfPlugYVersion_Background; }
-            set { this.RaiseAndSetIfChanged(ref _ñolorOfPlugYVersion_Background, value); }
+            set { SetProperty(ref _ñolorOfPlugYVersion_Background, value); }
         }
         #endregion
 
@@ -1723,7 +1690,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "ActiveBigStash", value);
-                this.RaiseAndSetIfChanged(ref _activeBigStash, value);
+                SetProperty(ref _activeBigStash, value);
             }
         }
 
@@ -1734,7 +1701,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "ActiveMultiPageStash", value);
-                this.RaiseAndSetIfChanged(ref _activeMultiPageStash, value);
+                SetProperty(ref _activeMultiPageStash, value);
             }
         }
 
@@ -1745,7 +1712,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "NbPagesPerIndex", value);
-                this.RaiseAndSetIfChanged(ref _nbPagesPerIndex, value);
+                SetProperty(ref _nbPagesPerIndex, value);
             }
         }
 
@@ -1756,7 +1723,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "NbPagesPerIndex2", value);
-                this.RaiseAndSetIfChanged(ref _nbPagesPerIndex2, value);
+                SetProperty(ref _nbPagesPerIndex2, value);
             }
         }
 
@@ -1767,7 +1734,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "MaxPersonnalPages", value);
-                this.RaiseAndSetIfChanged(ref _maxPersonnalPages, value);
+                SetProperty(ref _maxPersonnalPages, value);
             }
         }
 
@@ -1778,7 +1745,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "AutoRenameStashPage", value);
-                this.RaiseAndSetIfChanged(ref _autoRenameStashPage, value);
+                SetProperty(ref _autoRenameStashPage, value);
             }
         }
 
@@ -1789,7 +1756,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     PersonalNormalPageColor_Background = new SolidColorBrush(Colors.Gray);
                 else
@@ -1797,7 +1764,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("STASH", "PersonalNormalPageColor", value);
-                this.RaiseAndSetIfChanged(ref _personalNormalPageColor, value);
+                SetProperty(ref _personalNormalPageColor, value);
             }
         }
 
@@ -1805,7 +1772,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush PersonalNormalPageColor_Background
         {
             get { return _personalNormalPageColor_Background; }
-            set { this.RaiseAndSetIfChanged(ref _personalNormalPageColor_Background, value); }
+            set { SetProperty(ref _personalNormalPageColor_Background, value); }
         }
 
         private int _personalIndexPageColor;
@@ -1815,7 +1782,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     PersonalIndexPageColor_Background = new SolidColorBrush(Colors.Gray);
                 else
@@ -1823,7 +1790,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("STASH", "PersonalIndexPageColor", value);
-                this.RaiseAndSetIfChanged(ref _personalIndexPageColor, value);
+                SetProperty(ref _personalIndexPageColor, value);
             }
         }
 
@@ -1831,7 +1798,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush PersonalIndexPageColor_Background
         {
             get { return _personalIndexPageColor_Background; }
-            set { this.RaiseAndSetIfChanged(ref _personalIndexPageColor_Background, value); }
+            set { SetProperty(ref _personalIndexPageColor_Background, value); }
         }
 
         private int _personalMainIndexPageColor;
@@ -1841,7 +1808,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     PersonalMainIndexPageColor_Background = new SolidColorBrush(Colors.Gray);
                 else
@@ -1849,7 +1816,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("STASH", "PersonalMainIndexPageColor", value);
-                this.RaiseAndSetIfChanged(ref _personalMainIndexPageColor, value);
+                SetProperty(ref _personalMainIndexPageColor, value);
             }
         }
 
@@ -1857,7 +1824,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush PersonalMainIndexPageColor_Background
         {
             get { return _personalMainIndexPageColor_Background; }
-            set { this.RaiseAndSetIfChanged(ref _personalMainIndexPageColor_Background, value); }
+            set { SetProperty(ref _personalMainIndexPageColor_Background, value); }
         }
 
         private int _sharedNormalPageColor;
@@ -1867,7 +1834,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     SharedNormalPageColor_Background = new SolidColorBrush(Colors.Gray);
                 else
@@ -1875,7 +1842,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("STASH", "SharedNormalPageColor", value);
-                this.RaiseAndSetIfChanged(ref _sharedNormalPageColor, value);
+                SetProperty(ref _sharedNormalPageColor, value);
             }
         }
 
@@ -1883,7 +1850,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush SharedNormalPageColor_Background
         {
             get { return _sharedNormalPageColor_Background; }
-            set { this.RaiseAndSetIfChanged(ref _sharedNormalPageColor_Background, value); }
+            set { SetProperty(ref _sharedNormalPageColor_Background, value); }
         }
 
         private int _sharedIndexPageColor;
@@ -1893,7 +1860,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     SharedIndexPageColor_Background = new SolidColorBrush(Colors.Gray);
                 else
@@ -1901,7 +1868,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("STASH", "SharedIndexPageColor", value);
-                this.RaiseAndSetIfChanged(ref _sharedIndexPageColor, value);
+                SetProperty(ref _sharedIndexPageColor, value);
             }
         }
 
@@ -1909,7 +1876,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush SharedIndexPageColor_Background
         {
             get { return _sharedIndexPageColor_Background; }
-            set { this.RaiseAndSetIfChanged(ref _sharedIndexPageColor_Background, value); }
+            set { SetProperty(ref _sharedIndexPageColor_Background, value); }
         }
 
         private int _sharedMainIndexPageColor;
@@ -1919,7 +1886,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
-                    && (App.Fluent.Mode == FluentThemeMode.Light))
+                    && (Application.Current?.RequestedThemeVariant == ThemeVariant.Light))
 
                     SharedMainIndexPageColor_Background = new SolidColorBrush(Colors.Gray);
                 else
@@ -1927,7 +1894,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("STASH", "SharedMainIndexPageColor", value);
-                this.RaiseAndSetIfChanged(ref _sharedMainIndexPageColor, value);
+                SetProperty(ref _sharedMainIndexPageColor, value);
             }
         }
 
@@ -1935,7 +1902,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         public SolidColorBrush SharedMainIndexPageColor_Background
         {
             get { return _sharedMainIndexPageColor_Background; }
-            set { this.RaiseAndSetIfChanged(ref _sharedMainIndexPageColor_Background, value); }
+            set { SetProperty(ref _sharedMainIndexPageColor_Background, value); }
         }
 
         private bool _activeSharedStash;
@@ -1945,7 +1912,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "ActiveSharedStash", value);
-                this.RaiseAndSetIfChanged(ref _activeSharedStash, value);
+                SetProperty(ref _activeSharedStash, value);
             }
         }
 
@@ -1956,7 +1923,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "ActiveSharedStashInMultiPlayer", value);
-                this.RaiseAndSetIfChanged(ref _activeSharedStashInMultiPlayer, value);
+                SetProperty(ref _activeSharedStashInMultiPlayer, value);
             }
         }
 
@@ -1967,7 +1934,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "SeparateHardcoreStash", value);
-                this.RaiseAndSetIfChanged(ref _separateHardcoreStash, value);
+                SetProperty(ref _separateHardcoreStash, value);
             }
         }
 
@@ -1978,7 +1945,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "SharedStashFilename", value);
-                this.RaiseAndSetIfChanged(ref _sharedStashFilename, value);
+                SetProperty(ref _sharedStashFilename, value);
             }
         }
 
@@ -1990,7 +1957,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "DisplaySharedSetItemNameInGreen", value);
-                this.RaiseAndSetIfChanged(ref _displaySharedSetItemNameInGreen, value);
+                SetProperty(ref _displaySharedSetItemNameInGreen, value);
             }
         }
 
@@ -2001,7 +1968,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "MaxSharedPages", value);
-                this.RaiseAndSetIfChanged(ref _maxSharedPages, value);
+                SetProperty(ref _maxSharedPages, value);
             }
         }
 
@@ -2012,7 +1979,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "ActiveSharedGold", value);
-                this.RaiseAndSetIfChanged(ref _activeSharedGold, value);
+                SetProperty(ref _activeSharedGold, value);
             }
         }
 
@@ -2023,7 +1990,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "OpenSharedStashOnLoading", value);
-                this.RaiseAndSetIfChanged(ref _openSharedStashOnLoading, value);
+                SetProperty(ref _openSharedStashOnLoading, value);
             }
         }
 
@@ -2034,7 +2001,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXPreviousBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXPreviousBtn, value);
+                SetProperty(ref _posXPreviousBtn, value);
             }
         }
 
@@ -2045,7 +2012,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYPreviousBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYPreviousBtn, value);
+                SetProperty(ref _posYPreviousBtn, value);
             }
         }
 
@@ -2056,7 +2023,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWPreviousBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWPreviousBtn, value);
+                SetProperty(ref _posWPreviousBtn, value);
             }
         }
 
@@ -2067,7 +2034,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHPreviousBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHPreviousBtn, value);
+                SetProperty(ref _posHPreviousBtn, value);
             }
         }
 
@@ -2078,7 +2045,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXNextBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXNextBtn, value);
+                SetProperty(ref _posXNextBtn, value);
             }
         }
 
@@ -2089,7 +2056,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYNextBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYNextBtn, value);
+                SetProperty(ref _posYNextBtn, value);
             }
         }
 
@@ -2100,7 +2067,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWNextBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWNextBtn, value);
+                SetProperty(ref _posWNextBtn, value);
             }
         }
 
@@ -2111,7 +2078,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHNextBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHNextBtn, value);
+                SetProperty(ref _posHNextBtn, value);
             }
         }
 
@@ -2122,7 +2089,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXSharedBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXSharedBtn, value);
+                SetProperty(ref _posXSharedBtn, value);
             }
         }
 
@@ -2133,7 +2100,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYSharedBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYSharedBtn, value);
+                SetProperty(ref _posYSharedBtn, value);
             }
         }
 
@@ -2144,7 +2111,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWSharedBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWSharedBtn, value);
+                SetProperty(ref _posWSharedBtn, value);
             }
         }
 
@@ -2155,7 +2122,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHSharedBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHSharedBtn, value);
+                SetProperty(ref _posHSharedBtn, value);
             }
         }
 
@@ -2166,7 +2133,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXPreviousIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXPreviousIndexBtn, value);
+                SetProperty(ref _posXPreviousIndexBtn, value);
             }
         }
 
@@ -2177,7 +2144,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYPreviousIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYPreviousIndexBtn, value);
+                SetProperty(ref _posYPreviousIndexBtn, value);
             }
         }
 
@@ -2188,7 +2155,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWPreviousIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWPreviousIndexBtn, value);
+                SetProperty(ref _posWPreviousIndexBtn, value);
             }
         }
 
@@ -2199,7 +2166,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHPreviousIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHPreviousIndexBtn, value);
+                SetProperty(ref _posHPreviousIndexBtn, value);
             }
         }
 
@@ -2210,7 +2177,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXNextIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXNextIndexBtn, value);
+                SetProperty(ref _posXNextIndexBtn, value);
             }
         }
 
@@ -2221,7 +2188,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYNextIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYNextIndexBtn, value);
+                SetProperty(ref _posYNextIndexBtn, value);
             }
         }
 
@@ -2232,7 +2199,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWNextIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWNextIndexBtn, value);
+                SetProperty(ref _posWNextIndexBtn, value);
             }
         }
 
@@ -2243,7 +2210,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHNextIndexBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHNextIndexBtn, value);
+                SetProperty(ref _posHNextIndexBtn, value);
             }
         }
 
@@ -2254,7 +2221,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXPutGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXPutGoldBtn, value);
+                SetProperty(ref _posXPutGoldBtn, value);
             }
         }
 
@@ -2265,7 +2232,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYPutGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYPutGoldBtn, value);
+                SetProperty(ref _posYPutGoldBtn, value);
             }
         }
 
@@ -2276,7 +2243,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWPutGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWPutGoldBtn, value);
+                SetProperty(ref _posWPutGoldBtn, value);
             }
         }
 
@@ -2287,7 +2254,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHPutGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHPutGoldBtn, value);
+                SetProperty(ref _posHPutGoldBtn, value);
             }
         }
 
@@ -2298,7 +2265,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXTakeGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXTakeGoldBtn, value);
+                SetProperty(ref _posXTakeGoldBtn, value);
             }
         }
 
@@ -2309,7 +2276,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYTakeGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYTakeGoldBtn, value);
+                SetProperty(ref _posYTakeGoldBtn, value);
             }
         }
 
@@ -2320,7 +2287,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWTakeGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posWTakeGoldBtn, value);
+                SetProperty(ref _posWTakeGoldBtn, value);
             }
         }
 
@@ -2331,7 +2298,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHTakeGoldBtn", value);
-                this.RaiseAndSetIfChanged(ref _posHTakeGoldBtn, value);
+                SetProperty(ref _posHTakeGoldBtn, value);
             }
         }
 
@@ -2342,7 +2309,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXStashNameField", value);
-                this.RaiseAndSetIfChanged(ref _posXStashNameField, value);
+                SetProperty(ref _posXStashNameField, value);
             }
         }
 
@@ -2353,7 +2320,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYStashNameField", value);
-                this.RaiseAndSetIfChanged(ref _posYStashNameField, value);
+                SetProperty(ref _posYStashNameField, value);
             }
         }
 
@@ -2364,7 +2331,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWStashNameField", value);
-                this.RaiseAndSetIfChanged(ref _posWStashNameField, value);
+                SetProperty(ref _posWStashNameField, value);
             }
         }
 
@@ -2375,7 +2342,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHStashNameField", value);
-                this.RaiseAndSetIfChanged(ref _posHStashNameField, value);
+                SetProperty(ref _posHStashNameField, value);
             }
         }
 
@@ -2386,7 +2353,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosXStashGoldField", value);
-                this.RaiseAndSetIfChanged(ref _posXStashGoldField, value);
+                SetProperty(ref _posXStashGoldField, value);
             }
         }
 
@@ -2397,7 +2364,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosYStashGoldField", value);
-                this.RaiseAndSetIfChanged(ref _posYStashGoldField, value);
+                SetProperty(ref _posYStashGoldField, value);
             }
         }
 
@@ -2408,7 +2375,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosWStashGoldField", value);
-                this.RaiseAndSetIfChanged(ref _posWStashGoldField, value);
+                SetProperty(ref _posWStashGoldField, value);
             }
         }
 
@@ -2419,7 +2386,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STASH", "PosHStashGoldField", value);
-                this.RaiseAndSetIfChanged(ref _posHStashGoldField, value);
+                SetProperty(ref _posHStashGoldField, value);
             }
         }
         #endregion
@@ -2432,7 +2399,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STATS POINTS", "ActiveStatsUnassignment", value);
-                this.RaiseAndSetIfChanged(ref _activeStatsUnassignment, value);
+                SetProperty(ref _activeStatsUnassignment, value);
             }
         }
 
@@ -2450,7 +2417,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 else if (value == 18) value = 1;
 
                 _ini.SetVal("STATS POINTS", "KeyUsed", result);
-                this.RaiseAndSetIfChanged(ref _keyUsed, value);
+                SetProperty(ref _keyUsed, value);
             }
         }
 
@@ -2461,7 +2428,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STATS POINTS", "ActiveShiftClickLimit", value);
-                this.RaiseAndSetIfChanged(ref _activeShiftClickLimit, value);
+                SetProperty(ref _activeShiftClickLimit, value);
             }
         }
 
@@ -2472,7 +2439,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STATS POINTS", "LimitValueToShiftClick", value);
-                this.RaiseAndSetIfChanged(ref _limitValueToShiftClick, value);
+                SetProperty(ref _limitValueToShiftClick, value);
             }
         }
         #endregion
@@ -2485,7 +2452,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STAT ON LEVEL UP", "ActiveStatPerLevelUp", value);
-                this.RaiseAndSetIfChanged(ref _activeStatPerLevelUp, value);
+                SetProperty(ref _activeStatPerLevelUp, value);
             }
         }
 
@@ -2496,7 +2463,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("STAT ON LEVEL UP", "StatPerLevelUp", value);
-                this.RaiseAndSetIfChanged(ref _statPerLevelUp, value);
+                SetProperty(ref _statPerLevelUp, value);
             }
         }
         #endregion
@@ -2510,7 +2477,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SKILLS POINTS", "ActiveSkillsUnassignment", value);
-                this.RaiseAndSetIfChanged(ref _activeSkillsUnassignment, value);
+                SetProperty(ref _activeSkillsUnassignment, value);
             }
         }
 
@@ -2521,7 +2488,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SKILLS POINTS", "ActiveSkillsUnassignmentOneByOne", value);
-                this.RaiseAndSetIfChanged(ref _activeSkillsUnassignmentOneForOne, value);
+                SetProperty(ref _activeSkillsUnassignmentOneForOne, value);
             }
         }
 
@@ -2532,7 +2499,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SKILLS POINTS", "PosXUnassignSkillBtn", value);
-                this.RaiseAndSetIfChanged(ref _posXUnassignSkillBtn, value);
+                SetProperty(ref _posXUnassignSkillBtn, value);
             }
         }
 
@@ -2543,7 +2510,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SKILLS POINTS", "PosYUnassignSkillBtn", value);
-                this.RaiseAndSetIfChanged(ref _posYUnassignSkillBtn, value);
+                SetProperty(ref _posYUnassignSkillBtn, value);
             }
         }
         #endregion
@@ -2556,7 +2523,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SKILL ON LEVEL UP", "ActiveSkillPerLevelUp", value);
-                this.RaiseAndSetIfChanged(ref _activeSkillPerLevelUp, value);
+                SetProperty(ref _activeSkillPerLevelUp, value);
             }
         }
 
@@ -2567,7 +2534,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("SKILL ON LEVEL UP", "SkillPerLevelUp", value);
-                this.RaiseAndSetIfChanged(ref _skillPerLevelUp, value);
+                SetProperty(ref _skillPerLevelUp, value);
             }
         }
         #endregion
@@ -2582,7 +2549,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("LadderRuneWords", "Enabled", "ActiveLadderRunewords");
 
                 _ini.SetVal("WORLD EVENT", "ActiveWorldEvent", value);
-                this.RaiseAndSetIfChanged(ref _activeWorldEvent, value);
+                SetProperty(ref _activeWorldEvent, value);
             }
         }
 
@@ -2593,7 +2560,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "ShowCounterInAllDifficulty", value);
-                this.RaiseAndSetIfChanged(ref _showCounterInAllDifficulty, value);
+                SetProperty(ref _showCounterInAllDifficulty, value);
             }
         }
 
@@ -2604,7 +2571,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "ItemsToSell", value);
-                this.RaiseAndSetIfChanged(ref _itemsToSell, value);
+                SetProperty(ref _itemsToSell, value);
             }
         }
 
@@ -2616,7 +2583,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "MonsterID", value);
-                this.RaiseAndSetIfChanged(ref _monsterID, value);
+                SetProperty(ref _monsterID, value);
             }
         }
 
@@ -2627,7 +2594,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "OwnSOJSoldChargeFor", value);
-                this.RaiseAndSetIfChanged(ref _ownSOJSoldChargeFor, value);
+                SetProperty(ref _ownSOJSoldChargeFor, value);
             }
         }
 
@@ -2638,7 +2605,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "InititalSOJSoldMin", value);
-                this.RaiseAndSetIfChanged(ref _inititalSOJSoldMin, value);
+                SetProperty(ref _inititalSOJSoldMin, value);
             }
         }
 
@@ -2649,7 +2616,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "InititalSOJSoldMax", value);
-                this.RaiseAndSetIfChanged(ref _inititalSOJSoldMax, value);
+                SetProperty(ref _inititalSOJSoldMax, value);
             }
         }
 
@@ -2660,7 +2627,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "TriggerAtEachSOJSoldMin", value);
-                this.RaiseAndSetIfChanged(ref _triggerAtEachSOJSoldMin, value);
+                SetProperty(ref _triggerAtEachSOJSoldMin, value);
             }
         }
 
@@ -2671,7 +2638,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "TriggerAtEachSOJSoldMax", value);
-                this.RaiseAndSetIfChanged(ref _triggerAtEachSOJSoldMax, value);
+                SetProperty(ref _triggerAtEachSOJSoldMax, value);
             }
         }
 
@@ -2682,7 +2649,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "ActiveAutoSell", value);
-                this.RaiseAndSetIfChanged(ref _activeAutoSell, value);
+                SetProperty(ref _activeAutoSell, value);
             }
         }
 
@@ -2693,7 +2660,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "TimeBeforeAutoSellMin", value);
-                this.RaiseAndSetIfChanged(ref _timeBeforeAutoSellMin, value);
+                SetProperty(ref _timeBeforeAutoSellMin, value);
             }
         }
 
@@ -2704,7 +2671,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("WORLD EVENT", "TimeBeforeAutoSellMax", value);
-                this.RaiseAndSetIfChanged(ref _timeBeforeAutoSellMax, value);
+                SetProperty(ref _timeBeforeAutoSellMax, value);
             }
         }
         #endregion
@@ -2719,7 +2686,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("RedPortals", "Enabled", "ActiveUberQuest");
 
                 _ini.SetVal("UBER QUEST", "ActiveUberQuest", value);
-                this.RaiseAndSetIfChanged(ref _activeUberQuest, value);
+                SetProperty(ref _activeUberQuest, value);
             }
         }
 
@@ -2730,7 +2697,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberMephistoX", value);
-                this.RaiseAndSetIfChanged(ref _uberMephistoX, value);
+                SetProperty(ref _uberMephistoX, value);
             }
         }
 
@@ -2741,7 +2708,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberMephistoY", value);
-                this.RaiseAndSetIfChanged(ref _uberMephistoY, value);
+                SetProperty(ref _uberMephistoY, value);
             }
         }
 
@@ -2752,7 +2719,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberDiabloX", value);
-                this.RaiseAndSetIfChanged(ref _uberDiabloX, value);
+                SetProperty(ref _uberDiabloX, value);
             }
         }
 
@@ -2763,7 +2730,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberDiabloY", value);
-                this.RaiseAndSetIfChanged(ref _uberDiabloY, value);
+                SetProperty(ref _uberDiabloY, value);
             }
         }
 
@@ -2774,7 +2741,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberBaalX", value);
-                this.RaiseAndSetIfChanged(ref _uberBaalX, value);
+                SetProperty(ref _uberBaalX, value);
             }
         }
 
@@ -2785,7 +2752,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberBaalY", value);
-                this.RaiseAndSetIfChanged(ref _uberBaalY, value);
+                SetProperty(ref _uberBaalY, value);
             }
         }
 
@@ -2798,7 +2765,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("UberMinions", "Enabled", "ActiveUberMinions");
 
                 _ini.SetVal("UBER QUEST", "ActiveUberMinions", value);
-                this.RaiseAndSetIfChanged(ref _activeUberMinions, value);
+                SetProperty(ref _activeUberMinions, value);
             }
         }
 
@@ -2809,7 +2776,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberMephistoSpawnPercent", value);
-                this.RaiseAndSetIfChanged(ref _uberMephistoSpawnPercent, value);
+                SetProperty(ref _uberMephistoSpawnPercent, value);
             }
         }
 
@@ -2820,7 +2787,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberMephistoSpawnRadius", value);
-                this.RaiseAndSetIfChanged(ref _uberMephistoSpawnRadius, value);
+                SetProperty(ref _uberMephistoSpawnRadius, value);
             }
         }
 
@@ -2831,7 +2798,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberBaalSpawnPercent", value);
-                this.RaiseAndSetIfChanged(ref _uberBaalSpawnPercent, value);
+                SetProperty(ref _uberBaalSpawnPercent, value);
             }
         }
 
@@ -2842,7 +2809,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberBaalSpawnRadius", value);
-                this.RaiseAndSetIfChanged(ref _uberBaalSpawnRadius, value);
+                SetProperty(ref _uberBaalSpawnRadius, value);
             }
         }
 
@@ -2853,7 +2820,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberDiabloSpawnPercent", value);
-                this.RaiseAndSetIfChanged(ref _uberDiabloSpawnPercent, value);
+                SetProperty(ref _uberDiabloSpawnPercent, value);
             }
         }
 
@@ -2864,7 +2831,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberDiabloSpawnRadius", value);
-                this.RaiseAndSetIfChanged(ref _uberDiabloSpawnRadius, value);
+                SetProperty(ref _uberDiabloSpawnRadius, value);
             }
         }
 
@@ -2875,7 +2842,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "ActiveUberDiabloRushTweekAI", value);
-                this.RaiseAndSetIfChanged(ref _activeUberDiabloRushTweekAI, value);
+                SetProperty(ref _activeUberDiabloRushTweekAI, value);
             }
         }
 
@@ -2886,7 +2853,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "ActiveUberBaalTeleportTweekAI", value);
-                this.RaiseAndSetIfChanged(ref _activeUberBaalTeleportTweekAI, value);
+                SetProperty(ref _activeUberBaalTeleportTweekAI, value);
             }
         }
 
@@ -2897,7 +2864,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "ActiveUberBaalChillingArmorTweekAI", value);
-                this.RaiseAndSetIfChanged(ref _activeUberBaalChillingArmorTweekAI, value);
+                SetProperty(ref _activeUberBaalChillingArmorTweekAI, value);
             }
         }
 
@@ -2908,7 +2875,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("UBER QUEST", "UberBaalChillingArmorTimer", value);
-                this.RaiseAndSetIfChanged(ref _uberBaalChillingArmorTimer, value);
+                SetProperty(ref _uberBaalChillingArmorTimer, value);
             }
         }
         #endregion
@@ -2921,7 +2888,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("INTERFACE", "ActiveNewStatsInterface", value);
-                this.RaiseAndSetIfChanged(ref _activeNewStatsInterface, value);
+                SetProperty(ref _activeNewStatsInterface, value);
             }
         }
 
@@ -2932,7 +2899,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("INTERFACE", "SelectMainPageOnOpenning", value);
-                this.RaiseAndSetIfChanged(ref _selectMainPageOnOpenning, value);
+                SetProperty(ref _selectMainPageOnOpenning, value);
             }
         }
 
@@ -2943,7 +2910,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("INTERFACE", "PrintButtonsBackgroundOnMainStatsPage", value);
-                this.RaiseAndSetIfChanged(ref _printButtonsBackgroundOnMainStatsPage, value);
+                SetProperty(ref _printButtonsBackgroundOnMainStatsPage, value);
             }
         }
         #endregion
@@ -2956,7 +2923,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("EXTRA", "ActiveLaunchAnyNumberOfLOD", value);
-                this.RaiseAndSetIfChanged(ref _activeLaunchAnyNumberOfLOD, value);
+                SetProperty(ref _activeLaunchAnyNumberOfLOD, value);
             }
         }
 
@@ -2969,7 +2936,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("MapAutoRegen", "Enabled", "AlwaysRegenMapInSP");
 
                 _ini.SetVal("EXTRA", "AlwaysRegenMapInSP", value);
-                this.RaiseAndSetIfChanged(ref _alwaysRegenMapInSP, value);
+                SetProperty(ref _alwaysRegenMapInSP, value);
             }
         }
 
@@ -2982,7 +2949,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value != 0) ShowMsgBaseModConflict("PlayersX", "Enabled", "NBPlayersByDefault", 0);
 
                 _ini.SetVal("EXTRA", "NBPlayersByDefault", value);
-                this.RaiseAndSetIfChanged(ref _nBPlayersByDefault, value);
+                SetProperty(ref _nBPlayersByDefault, value);
             }
         }
 
@@ -2995,7 +2962,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("IlvlDisplay", "Enabled", "ActiveDisplayItemLevel");
 
                 _ini.SetVal("EXTRA", "ActiveDisplayItemLevel", value);
-                this.RaiseAndSetIfChanged(ref _activeDisplayItemLevel, value);
+                SetProperty(ref _activeDisplayItemLevel, value);
             }
         }
 
@@ -3006,7 +2973,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("EXTRA", "AlwaysDisplayLifeAndManaValues", value);
-                this.RaiseAndSetIfChanged(ref _alwaysDisplayLifeAndManaValues, value);
+                SetProperty(ref _alwaysDisplayLifeAndManaValues, value);
             }
         }
 
@@ -3017,7 +2984,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("EXTRA", "EnabledTXTFilesWhenMSExcelOpenIt", value);
-                this.RaiseAndSetIfChanged(ref _enabledTXTFilesWhenMSExcelOpenIt, value);
+                SetProperty(ref _enabledTXTFilesWhenMSExcelOpenIt, value);
             }
         }
 
@@ -3028,7 +2995,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("EXTRA", "ActiveDisplayBaseStatsValue", value);
-                this.RaiseAndSetIfChanged(ref _activeDisplayBaseStatsValue, value);
+                SetProperty(ref _activeDisplayBaseStatsValue, value);
             }
         }
 
@@ -3041,7 +3008,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("LadderRuneWords", "Enabled", "ActiveLadderRunewords");
 
                 _ini.SetVal("EXTRA", "ActiveLadderRunewords", value);
-                this.RaiseAndSetIfChanged(ref _activeLadderRunewords, value);
+                SetProperty(ref _activeLadderRunewords, value);
             }
         }
 
@@ -3052,7 +3019,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("EXTRA", "ActiveCowPortalWhenCowKingWasKilled", value);
-                this.RaiseAndSetIfChanged(ref _activeCowPortalWhenCowKingWasKilled, value);
+                SetProperty(ref _activeCowPortalWhenCowKingWasKilled, value);
             }
         }
 
@@ -3065,7 +3032,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 if (value) ShowMsgBaseModConflict("NilPortalFix", "Enabled", "ActiveDoNotCloseNihlathakPortal");
 
                 _ini.SetVal("EXTRA", "ActiveDoNotCloseNihlathakPortal", value);
-                this.RaiseAndSetIfChanged(ref _activeDoNotCloseNihlathakPortal, value);
+                SetProperty(ref _activeDoNotCloseNihlathakPortal, value);
             }
         }
 
@@ -3076,11 +3043,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set
             {
                 _ini.SetVal("EXTRA", "MoveCainNearHarrogathWaypoint", value);
-                this.RaiseAndSetIfChanged(ref _moveCainNearHarrogathWaypoint, value);
+                SetProperty(ref _moveCainNearHarrogathWaypoint, value);
             }
         }
+
+
         #endregion
 
 
     }
+
 }

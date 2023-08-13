@@ -14,33 +14,37 @@ namespace PlugY_Configurator_Avalonia.Views
         {
             InitializeComponent();
 #if DEBUG
-            this.AttachDevTools();
+            //this.AttachDevTools();
 #endif
             AddHandler(DragDrop.DropEvent, Drop);
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
 
+        [STAThread]
         private void Drop(object _, DragEventArgs e)
         {
-            if (e.Data.Contains(DataFormats.FileNames))
-                DragDropEnum = e.Data.GetFileNames();
-            //Console.WriteLine(e.Data.GetFileNames());
-
-            //foreach (string file in e.Data.GetFileNames())
-            //Console.WriteLine(file);
+            if (e.Data.Contains(DataFormats.Files))
+            {
+                IEnumerator<Avalonia.Platform.Storage.IStorageItem>? tmpEnum = e.Data.GetFiles()?.GetEnumerator();
+                if (tmpEnum != null)
+                {
+                    List<string> result = new();
+                    while (tmpEnum.MoveNext())   // пока не будет возвращено false
+                    {
+                        result.Add(tmpEnum.Current.Path.LocalPath);
+                    }
+                    DragDropEnum = result;
+                }
+            }
         }
 
-        public IEnumerable<string>? DragDropEnum
+        public List<string> DragDropEnum
         {
             get { return GetValue(DragDropEnumProperty); }
             set { SetValue(DragDropEnumProperty, value); }
         }
 
-        public static readonly StyledProperty<IEnumerable<string>?> DragDropEnumProperty = AvaloniaProperty.Register<Window, IEnumerable<string>?>(nameof(DragDropEnum));
+        public static readonly StyledProperty<List<string>> DragDropEnumProperty = AvaloniaProperty.Register<Window, List<string>>(nameof(DragDropEnum));
 
 
     }

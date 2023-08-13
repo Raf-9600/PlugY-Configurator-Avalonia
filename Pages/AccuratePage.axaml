@@ -5,16 +5,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i18n="clr-namespace:AvaloniaLocalizationExample.Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:PlugY_Configurator_Avalonia.ViewModels"
     d:DesignHeight="750"
     d:DesignWidth="1500"
+    x:DataType="vm:MainWindowViewModel"
     mc:Ignorable="d">
 
     <UserControl.Resources>
 
-        <GeometryDrawing
-            x:Key="Material.FileSearchOutline"
-            Brush="{Binding ThemeInvertColor}"
-            Geometry="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H13C12.59,21.75 12.2,21.44 11.86,21.1C11.53,20.77 11.25,20.4 11,20H6V4H13V9H18V10.18C18.71,10.34 19.39,10.61 20,11V8L14,2M20.31,18.9C21.64,16.79 21,14 18.91,12.68C16.8,11.35 14,12 12.69,14.08C11.35,16.19 12,18.97 14.09,20.3C15.55,21.23 17.41,21.23 18.88,20.32L22,23.39L23.39,22L20.31,18.9M16.5,19A2.5,2.5 0 0,1 14,16.5A2.5,2.5 0 0,1 16.5,14A2.5,2.5 0 0,1 19,16.5A2.5,2.5 0 0,1 16.5,19Z" />
+        <DrawingImage x:Key="Material.FileSearchOutline">
+            <DrawingImage.Drawing>
+                <GeometryDrawing Brush="{Binding ThemeInvertColor}" Geometry="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H13C12.59,21.75 12.2,21.44 11.86,21.1C11.53,20.77 11.25,20.4 11,20H6V4H13V9H18V10.18C18.71,10.34 19.39,10.61 20,11V8L14,2M20.31,18.9C21.64,16.79 21,14 18.91,12.68C16.8,11.35 14,12 12.69,14.08C11.35,16.19 12,18.97 14.09,20.3C15.55,21.23 17.41,21.23 18.88,20.32L22,23.39L23.39,22L20.31,18.9M16.5,19A2.5,2.5 0 0,1 14,16.5A2.5,2.5 0 0,1 16.5,14A2.5,2.5 0 0,1 19,16.5A2.5,2.5 0 0,1 16.5,19Z" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
 
     </UserControl.Resources>
 
@@ -88,7 +91,7 @@
 
                     <TextBox
                         MaxWidth="200"
-                        Text="{Binding Library}"
+                        Text="{CompiledBinding Library}"
                         ToolTip.Tip="{i18n:Localize Library_Hint}">
                         <TextBox.InnerRightContent>
                             <Button
@@ -96,14 +99,14 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Background="Transparent"
-                                Command="{Binding DllToLoad_BtnClick}"
+                                Command="{CompiledBinding DllToLoad_BtnClick}"
                                 CommandParameter="Library">
 
-                                <DrawingPresenter
+                                <Image
                                     Height="25"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
-                                    Drawing="{StaticResource Material.FileSearchOutline}" />
+                                    Source="{StaticResource Material.FileSearchOutline}" />
 
                             </Button>
                         </TextBox.InnerRightContent>
@@ -201,8 +204,8 @@
                             <ComboBoxItem>
                                 <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                             </ComboBoxItem>
-                            <ComboBoxItem IsVisible="False" />
-                            <ComboBoxItem IsVisible="False" />
+                            <!-- <ComboBoxItem IsVisible="False" /> -->
+                            <!-- <ComboBoxItem IsVisible="False" /> -->
                             <ComboBoxItem>
                                 <TextBlock
                                     Background="{Binding ColorOfVersionText_Background}"
@@ -215,7 +218,7 @@
                                     Foreground="#CBCDCC"
                                     Text="{i18n:Localize ColorGray}" />
                             </ComboBoxItem>
-                            <ComboBoxItem IsVisible="False" />
+                            <!-- <ComboBoxItem IsVisible="False" /> -->
                             <ComboBoxItem>
                                 <TextBlock
                                     Background="{Binding ColorOfVersionText_Background}"
@@ -301,8 +304,8 @@
                             <ComboBoxItem>
                                 <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                             </ComboBoxItem>
-                            <ComboBoxItem IsVisible="False" />
-                            <ComboBoxItem IsVisible="False" />
+                            <!-- <ComboBoxItem IsVisible="False" /> -->
+                            <!-- <ComboBoxItem IsVisible="False" /> -->
                             <ComboBoxItem>
                                 <TextBlock
                                     Background="{Binding ColorOfPlugYVersion_Background}"
@@ -315,7 +318,7 @@
                                     Foreground="#CBCDCC"
                                     Text="{i18n:Localize ColorGray}" />
                             </ComboBoxItem>
-                            <ComboBoxItem IsVisible="False" />
+                            <!-- <ComboBoxItem IsVisible="False" /> -->
                             <ComboBoxItem>
                                 <TextBlock
                                     Background="{Binding ColorOfPlugYVersion_Background}"
@@ -525,8 +528,8 @@
                         <ComboBoxItem>
                             <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding PersonalNormalPageColor_Background}"
@@ -539,7 +542,7 @@
                                 Foreground="#CBCDCC"
                                 Text="{i18n:Localize ColorGray}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding PersonalNormalPageColor_Background}"
@@ -610,8 +613,8 @@
                         <ComboBoxItem>
                             <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding PersonalIndexPageColor_Background}"
@@ -624,7 +627,7 @@
                                 Foreground="#CBCDCC"
                                 Text="{i18n:Localize ColorGray}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding PersonalIndexPageColor_Background}"
@@ -694,8 +697,8 @@
                         <ComboBoxItem>
                             <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding PersonalIndexPageColor_Background}"
@@ -708,7 +711,7 @@
                                 Foreground="#CBCDCC"
                                 Text="{i18n:Localize ColorGray}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding PersonalIndexPageColor_Background}"
@@ -778,8 +781,8 @@
                         <ComboBoxItem>
                             <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding SharedNormalPageColor_Background}"
@@ -792,7 +795,7 @@
                                 Foreground="#CBCDCC"
                                 Text="{i18n:Localize ColorGray}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding SharedNormalPageColor_Background}"
@@ -862,8 +865,8 @@
                         <ComboBoxItem>
                             <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding SharedIndexPageColor_Background}"
@@ -876,7 +879,7 @@
                                 Foreground="#CBCDCC"
                                 Text="{i18n:Localize ColorGray}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding SharedIndexPageColor_Background}"
@@ -946,8 +949,8 @@
                         <ComboBoxItem>
                             <TextBlock Foreground="#168B18" Text="{i18n:Localize ColorDarkGreen}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding SharedMainIndexPageColor_Background}"
@@ -960,7 +963,7 @@
                                 Foreground="#CBCDCC"
                                 Text="{i18n:Localize ColorGray}" />
                         </ComboBoxItem>
-                        <ComboBoxItem IsVisible="False" />
+                        <!-- <ComboBoxItem IsVisible="False" /> -->
                         <ComboBoxItem>
                             <TextBlock
                                 Background="{Binding SharedMainIndexPageColor_Background}"
@@ -1274,8 +1277,7 @@
                     <CheckBox
                         Name="LANGUAGE__ActiveUberMinions"
                         Content="{i18n:Localize ActiveUberMinions}"
-                        IsChecked="{Binding ActiveUberMinions}"
-                        ToolTip.Tip="{i18n:Localize ActiveChangeLanguage_Hint}">
+                        IsChecked="{Binding ActiveUberMinions}">
                         <CheckBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem />

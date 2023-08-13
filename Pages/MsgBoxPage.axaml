@@ -5,9 +5,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i18n="clr-namespace:AvaloniaLocalizationExample.Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:PlugY_Configurator_Avalonia.ViewModels"
     MaxWidth="900"
     d:DesignHeight="140"
     d:DesignWidth="900"
+    x:DataType="vm:MainWindowViewModel"
     mc:Ignorable="d">
 
     <UserControl.Styles>
@@ -47,7 +49,7 @@
         VerticalAlignment="Center"
         Background="{Binding MsgBox_BackgroundColor}">
         <Border BorderBrush="{Binding MsgBox_BorderColor}" BorderThickness="1">
-            <Border BorderBrush="{StaticResource SystemAccentColor}" BorderThickness="1">
+            <Border BorderBrush="{DynamicResource SystemAccentColorDark0}" BorderThickness="1">
                 <DockPanel HorizontalAlignment="Center">
 
                     <DockPanel
@@ -62,7 +64,7 @@
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
                             IsVisible="{Binding MsgBox_Icon_Visab}">
-                            <DrawingPresenter Drawing="{Binding MsgBox_Icon}" />
+                            <Image Source="{Binding MsgBox_Icon}" />
                         </Grid>
 
                         <DockPanel
@@ -90,7 +92,7 @@
                                 Margin="0,15,0,0"
                                 DockPanel.Dock="Bottom"
                                 IsVisible="{Binding MsgBox_ComboBox_Visab}"
-                                Items="{Binding MsgBox_ComboBox_Item, Mode=TwoWay}"
+                                ItemsSource="{Binding MsgBox_ComboBox_Items, Mode=TwoWay}"
                                 SelectedIndex="{Binding MsgBox_ComboBox_Index, Mode=TwoWay}"
                                 SelectedItem="{Binding MsgBox_ComboBox_Item, Mode=TwoWay}" />
                             <TextBox
@@ -123,7 +125,7 @@
                                     Margin="0"
                                     HorizontalAlignment="Center"
                                     HorizontalContentAlignment="Center"
-                                    BorderBrush="{StaticResource SystemAccentColor}"
+                                    BorderBrush="{DynamicResource SystemAccentColor}"
                                     BorderThickness="0.5"
                                     Command="{Binding MsgBox_Btn1_Click}"
                                     Content="{Binding MsgBox_Btn1_Txt}"
@@ -142,7 +144,7 @@
                                     Margin="0"
                                     HorizontalAlignment="Center"
                                     HorizontalContentAlignment="Center"
-                                    BorderBrush="{StaticResource SystemAccentColor}"
+                                    BorderBrush="{DynamicResource SystemAccentColor}"
                                     BorderThickness="0.5"
                                     Command="{Binding MsgBox_Btn2_Click}"
                                     Content="{Binding MsgBox_Btn2_Txt}"
@@ -161,7 +163,7 @@
                                     Margin="0"
                                     HorizontalAlignment="Center"
                                     HorizontalContentAlignment="Center"
-                                    BorderBrush="{StaticResource SystemAccentColor}"
+                                    BorderBrush="{DynamicResource SystemAccentColor}"
                                     BorderThickness="0.5"
                                     Command="{Binding MsgBox_Btn3_Click}"
                                     Content="{Binding MsgBox_Btn3_Txt}"

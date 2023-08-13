@@ -1,27 +1,18 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Platform;
-using AvaloniaLocalizationExample.Localizer;
+﻿using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace PlugY_Configurator_Avalonia.Models
 {
     class MainModel
     {
-        OperatingSystemType _detectedOS = AvaloniaLocator.Current.GetService<IRuntimePlatform>().GetRuntimeInfo().OperatingSystem;
+        OperatingSystemType _detectedOS = DetectOS();
         /*
         public string UrlNewVer;
         public async Task<bool> UpdateFind()
@@ -420,6 +411,68 @@ namespace PlugY_Configurator_Avalonia.Models
             }
 
             return masetStr;
+        }
+
+        public static async Task<string> OpenFolderDialog(Window targetWindow, string title = "", string startOpen = "")
+        {
+            var storageProvider = targetWindow.StorageProvider;
+
+            var options = new FolderPickerOpenOptions
+            {
+                SuggestedStartLocation = await storageProvider.TryGetFolderFromPathAsync(startOpen),
+                Title = title,
+                AllowMultiple = false
+            };
+
+            IReadOnlyList<IStorageFolder> result = await storageProvider.OpenFolderPickerAsync(options);
+            return result[0].Path.LocalPath;
+        }
+
+        
+
+        public static async Task<string[]?> OpenFileDialog(Window targetWindow, (string name, string pattern, string mime)[] fTypes, string title = "", string startOpen = "", bool multiFiles = false)
+        {
+            var storageProvider = targetWindow.StorageProvider;
+
+            var options = new FilePickerOpenOptions
+            {
+                SuggestedStartLocation = await storageProvider.TryGetFolderFromPathAsync(startOpen),
+                Title = title,
+                AllowMultiple = multiFiles
+            };
+
+
+            var fpft = new FilePickerFileType[fTypes.Length];
+            for (int i = 0; i < fTypes.Length; i++)
+            {
+                var (name, pattern, mime) = fTypes[i];
+                FilePickerFileType filePickerFileType = new(name) { Patterns = new[] { pattern } };
+
+                if (!string.IsNullOrEmpty(mime))
+                    filePickerFileType.MimeTypes = new[] { mime };
+
+                fpft[i] = filePickerFileType;
+            }
+
+
+            options.FileTypeFilter = fpft;
+            IReadOnlyList<IStorageFile> result = await storageProvider.OpenFilePickerAsync(options);
+
+
+            if (result.Count == 0)
+                return null;
+            else
+                return result.Select(v => v.Path.LocalPath).ToArray();
+        }
+
+        public static OperatingSystemType DetectOS()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return OperatingSystemType.WinNT;
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return OperatingSystemType.OSX;
+            else // if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return OperatingSystemType.Linux;
         }
 
     }

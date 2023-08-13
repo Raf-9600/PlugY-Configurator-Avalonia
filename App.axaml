@@ -2,14 +2,14 @@
     x:Class="PlugY_Configurator_Avalonia.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:PlugY_Configurator_Avalonia">
-    <Application.DataTemplates>
-        <local:ViewLocator />
-    </Application.DataTemplates>
+    xmlns:local="using:PlugY_Configurator_Avalonia"
+    xmlns:vm="using:PlugY_Configurator_Avalonia.ViewModels"
+    x:DataType="vm:MainWindowViewModel"
+    RequestedThemeVariant="Default">
 
     <Application.Styles>
 
-        <FluentTheme Mode="Light" />
+        <FluentTheme />
 
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="14" />
@@ -42,18 +42,18 @@
         </Style>
 
         <Style Selector="NumericUpDown">
-			<Setter Property="Margin" Value="10,0,0,0" />
-			<Setter Property="Maximum" Value="999999" />
-			<Setter Property="Minimum" Value="-1" />
+            <Setter Property="Margin" Value="10,0,0,0" />
+            <Setter Property="Maximum" Value="999999" />
+            <Setter Property="Minimum" Value="-1" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Width" Value="140" />
             <Setter Property="MaxWidth" Value="140" />
-			<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
-			<Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="FontFamily" Value="{DynamicResource NotoSans}" />
-			<Setter Property="Increment" Value="1" />
-			<Setter Property="FormatString" Value="#0" />
+            <Setter Property="Increment" Value="1" />
+            <Setter Property="FormatString" Value="#0" />
         </Style>
 
         <Style Selector="ToolTip">
@@ -83,18 +83,18 @@
 
 
 
-			<Color x:Key="SystemAccentColorLight0">#DC0000</Color>
-			<Color x:Key="SystemAccentColorLight1">#FF0000</Color>
-			<Color x:Key="SystemAccentColorLight2">#FF0000</Color>
-			<Color x:Key="SystemAccentColorLight3">#FF0000</Color>
+            <Color x:Key="SystemAccentColorLight0">#DC0000</Color>
+            <Color x:Key="SystemAccentColorLight1">#FF0000</Color>
+            <Color x:Key="SystemAccentColorLight2">#FF0000</Color>
+            <Color x:Key="SystemAccentColorLight3">#FF0000</Color>
 
-			<Color x:Key="SystemAccentColorDark0">#A90E00</Color>
-			<Color x:Key="SystemAccentColorDark1">#DB0E00</Color>
-			<Color x:Key="SystemAccentColorDark2">#DB0E00</Color>
-			<Color x:Key="SystemAccentColorDark3">#DB0E00</Color>
+            <Color x:Key="SystemAccentColorDark0">#A90E00</Color>
+            <Color x:Key="SystemAccentColorDark1">#DB0E00</Color>
+            <Color x:Key="SystemAccentColorDark2">#DB0E00</Color>
+            <Color x:Key="SystemAccentColorDark3">#DB0E00</Color>
 
 
-		</ResourceDictionary>
+        </ResourceDictionary>
 
     </Application.Resources>
 
