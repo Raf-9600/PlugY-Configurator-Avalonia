@@ -349,7 +349,6 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             if (args.Length > 1)
                 workFile = _model.FindPlugyIni(args);
 
-
             if (App.FirstStart)
             {
                 bool setLng = false;
@@ -564,6 +563,20 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         {
             get => _themeInvertColor;
             set => SetProperty(ref _themeInvertColor, value);
+        }
+
+        private SolidColorBrush _themeWhiteColor = SolidColorBrush.Parse("#fff5f5f5");
+        public SolidColorBrush ThemeWhiteColor
+        {
+            get => _themeWhiteColor;
+            set => SetProperty(ref _themeWhiteColor, value);
+        }
+
+        private SolidColorBrush _themeDarkColor = SolidColorBrush.Parse("#3F3F3F");
+        public SolidColorBrush ThemeDarkColor
+        {
+            get => _themeDarkColor;
+            set => SetProperty(ref _themeDarkColor, value);
         }
 
         [DataMember]

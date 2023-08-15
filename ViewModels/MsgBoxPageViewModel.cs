@@ -229,6 +229,13 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set => SetProperty(ref _msgBox_TxtBox_Txt, value);
         }
 
+        private string _msgBox_ComboBox_Item;
+        public string MsgBox_ComboBox_Item
+        {
+            get => _msgBox_ComboBox_Item;
+            set => SetProperty(ref _msgBox_ComboBox_Item, value);
+        }
+
         private IEnumerable<string> _msgBox_ComboBox_Items;
         public IEnumerable<string> MsgBox_ComboBox_Items 
         {
@@ -248,13 +255,6 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         {
             get => _msgBox_ComboBox_Index;
             set => SetProperty(ref _msgBox_ComboBox_Index, value);
-        }
-
-        private string _msgBox_ComboBox_Item;
-        public string MsgBox_ComboBox_Item
-        {
-            get => _msgBox_ComboBox_Item;
-            set => SetProperty(ref _msgBox_ComboBox_Item, value);
         }
 
 
