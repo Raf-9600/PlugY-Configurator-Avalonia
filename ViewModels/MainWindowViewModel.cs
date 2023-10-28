@@ -413,6 +413,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
+        [RelayCommand]
         public async Task SelectLng()
         {
             SelectLngBtn_Enab = false;
@@ -457,7 +458,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         private Dictionary<string, string> _cmbBoxLng_DictItms = new()
         {
             ["English"] = "en",
-            ["Ðóññêèé"] = "ru",
+            ["ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"] = "ru",
             ["Deutsch"] = "de"
         };
         public Dictionary<string, string> CmbBoxLng_DictItms
@@ -491,7 +492,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     if (value == item.Key)
                     {
                         Localizer.Instance.LoadLanguage(item.Value);
-                        SelfLng_rus = (value == "Ðóññêèé");
+                        SelfLng_rus = (value == "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
                         break;
                     }
                 }
@@ -1632,10 +1633,10 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private int _ñolorOfVersionText;
+        private int _colorOfVersionText;
         public int ColorOfVersionText
         {
-            get { return _ñolorOfVersionText; }
+            get { return _colorOfVersionText; }
             set
             {
                 if (((value == 0) || (value == 15) || (value == 16) || (value == 18))
@@ -1647,15 +1648,15 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
                 _ini.SetVal("MAIN SCREEN", "ColorOfVersionText", value); //_ini.SetVal("MAIN SCREEN", "ColorOfVersionText", ColorFromNum(value));
-                SetProperty(ref _ñolorOfVersionText, value);
+                SetProperty(ref _colorOfVersionText, value);
             }
         }
 
-        private SolidColorBrush _ñolorOfVersionText_Background;
+        private SolidColorBrush _colorOfVersionText_Background;
         public SolidColorBrush ColorOfVersionText_Background
         {
-            get { return _ñolorOfVersionText_Background; }
-            set { SetProperty(ref _ñolorOfVersionText_Background, value); }
+            get { return _colorOfVersionText_Background; }
+            set { SetProperty(ref _colorOfVersionText_Background, value); }
         }
 
         private bool _activePrintPlugYVersion;
@@ -1687,11 +1688,11 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _ñolorOfPlugYVersion_Background;
+        private SolidColorBrush _colorOfPlugYVersion_Background;
         public SolidColorBrush ColorOfPlugYVersion_Background
         {
-            get { return _ñolorOfPlugYVersion_Background; }
-            set { SetProperty(ref _ñolorOfPlugYVersion_Background, value); }
+            get { return _colorOfPlugYVersion_Background; }
+            set { SetProperty(ref _colorOfPlugYVersion_Background, value); }
         }
         #endregion
 

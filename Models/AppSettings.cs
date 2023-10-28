@@ -162,11 +162,11 @@ class AppSettings
     {
         string? result = Convert.ToString(value);
 
-        if (result != null && value != null && value != GetDefaultValue(value.GetType()))
+        if (result != null && value != null && result != GetDefaultValue(value.GetType()))
             appSettings[name] = result;
     }
 
-    public static void WriteSettingsFile(string settingsJson, object? obj = null)
+    public static void WriteSettingsFile(string settingsJson, object? obj)
     {
         if (obj != null && mmbrs != null)
         {
