@@ -337,19 +337,12 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 EnabDarkThemeGUI(_model.DetectDarkTheme() ?? true);
             }
 
-
-            MainWindowViewModelAsync();
+            App.LoadedSettings += MainWindowViewModelAsync;
         }
 
         private async void MainWindowViewModelAsync()
         {
-            string[] args = Environment.GetCommandLineArgs();
-            string workFile = string.Empty;
-
-            if (args.Length > 1)
-                workFile = _model.FindPlugyIni(args);
-
-            if (App.FirstStart)
+            if (string.IsNullOrEmpty(LngGui))
             {
                 bool setLng = false;
                 foreach (var item in CmbBoxLng_DictItms)
@@ -363,8 +356,23 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 }
                 if (!setLng)
                     await SelectLng();
+            }
 
 
+
+            string[] args = Environment.GetCommandLineArgs();
+            string workFile = string.Empty;
+
+            if (args.Length > 1)
+            {
+                workFile = _model.FindPlugyIni(args);
+
+                if (!string.IsNullOrEmpty(workFile)) PlugyFullPath = workFile;
+            }
+
+
+            if (string.IsNullOrEmpty(PlugyFullPath))
+            {
                 if (!File.Exists(workFile))
                 {
                     workFile = _model.FindWorkDir("PlugY.ini");
@@ -458,7 +466,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         private Dictionary<string, string> _cmbBoxLng_DictItms = new()
         {
             ["English"] = "en",
-            ["�������"] = "ru",
+            ["Русский"] = "ru",
             ["Deutsch"] = "de"
         };
         public Dictionary<string, string> CmbBoxLng_DictItms
@@ -481,6 +489,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
+        [DataMember]
+        [AppSettings("Language")]
         private string _lngGui;
         public string LngGui
         {
@@ -492,7 +502,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     if (value == item.Key)
                     {
                         Localizer.Instance.LoadLanguage(item.Value);
-                        SelfLng_rus = (value == "�������");
+                        SelfLng_rus = (value == "Русский");
                         break;
                     }
                 }

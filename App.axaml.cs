@@ -33,6 +33,9 @@ namespace PlugY_Configurator_Avalonia
             AvaloniaXamlLoader.Load(this);
         }
 
+        public delegate void InfoHandler();
+        public static event InfoHandler? LoadedSettings;
+
         public override void OnFrameworkInitializationCompleted()
         {
             BindingPlugins.DataValidators.RemoveAt(0);
@@ -46,6 +49,7 @@ namespace PlugY_Configurator_Avalonia
                 {
                     DataContext = AppSettings.LoadSettings(new MainWindowViewModel()) //DataContext = new MainViewModel()
                 };
+                LoadedSettings?.Invoke();
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -56,8 +60,8 @@ namespace PlugY_Configurator_Avalonia
                 Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
             }
         }
-
     }
+
 }
 public enum OperatingSystemType
 {

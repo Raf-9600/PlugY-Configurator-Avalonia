@@ -223,7 +223,7 @@ namespace PlugY_Configurator_Avalonia.Models
                 {
                     string fleString = Path.GetFileName(fle);
 
-                    if (fleString.Equals("PlugY.ini", StringComparison.OrdinalIgnoreCase))
+                    if (fleString.Equals("PlugY.ini", StringComparison.OrdinalIgnoreCase) && File.Exists(fle))
                         return fle;
                 }
 

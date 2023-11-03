@@ -29,7 +29,7 @@ namespace PlugY_Configurator_Avalonia.Views
                 if (tmpEnum != null)
                 {
                     List<string> result = new();
-                    while (tmpEnum.MoveNext())   // пока не будет возвращено false
+                    while (tmpEnum.MoveNext())
                     {
                         result.Add(tmpEnum.Current.Path.LocalPath);
                     }
