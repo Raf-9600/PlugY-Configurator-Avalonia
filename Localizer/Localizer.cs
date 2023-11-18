@@ -9,6 +9,12 @@
     using System.ComponentModel;
     using System.IO;
     using System.Text;
+    using System.Text.Json.Serialization.Metadata;
+
+    [JsonSourceGenerationOptions(ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip, WriteIndented = true)]
+    [JsonSerializable(typeof(Dictionary<string, string>))]
+    internal partial class SourceGenerationContext : JsonSerializerContext
+    { }
 
     public class Localizer : INotifyPropertyChanged
     {
@@ -16,16 +22,19 @@
         private const string IndexerArrayName = "Item[]";
         private Dictionary<string, string>? m_Strings = null;
 
-        private readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new System.Text.Json.JsonSerializerOptions
+        /* private readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new System.Text.Json.JsonSerializerOptions
         {
             ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip,
             WriteIndented = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            TypeInfoResolver = SourceGenerationContext.Default
+        }; */
+
+
 
         public Localizer()
         {
-
+            //_jsonOptions.MakeReadOnly();
         }
 
         private string? _nameAssembly = null;
@@ -39,7 +48,7 @@
             {
                 using (StreamReader sr = new(AssetLoader.Open(uri), Encoding.UTF8)) 
                 {
-                    m_Strings = JsonSerializer.Deserialize<Dictionary<string, string>>(sr.ReadToEnd(), _jsonOptions);
+                    m_Strings = JsonSerializer.Deserialize(sr.ReadToEnd(), typeof(Dictionary<string, string>), SourceGenerationContext.Default) as Dictionary<string, string>;
                 }
                 Invalidate();
 

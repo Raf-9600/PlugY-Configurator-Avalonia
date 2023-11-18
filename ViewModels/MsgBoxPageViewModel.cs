@@ -192,7 +192,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set => SetProperty(ref _msgBox_Title_Visab, value);
         }
 
-        private string _msgBox_Title_Txt;
+        private string _msgBox_Title_Txt = string.Empty;
         public string MsgBox_Title_Txt
         {
             get => _msgBox_Title_Txt;
@@ -203,7 +203,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string msgBox_Txt;
+        private string msgBox_Txt = string.Empty;
         public string MsgBox_Txt
         {
             get => msgBox_Txt;
@@ -222,22 +222,22 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _msgBox_TxtBox_Txt;
+        private string _msgBox_TxtBox_Txt = string.Empty;
         public string MsgBox_TxtBox_Txt
         {
             get => _msgBox_TxtBox_Txt;
             set => SetProperty(ref _msgBox_TxtBox_Txt, value);
         }
 
-        private string _msgBox_ComboBox_Item;
+        private string _msgBox_ComboBox_Item = string.Empty;
         public string MsgBox_ComboBox_Item
         {
             get => _msgBox_ComboBox_Item;
             set => SetProperty(ref _msgBox_ComboBox_Item, value);
         }
 
-        private IEnumerable<string> _msgBox_ComboBox_Items;
-        public IEnumerable<string> MsgBox_ComboBox_Items 
+        private IEnumerable<string>? _msgBox_ComboBox_Items;
+        public IEnumerable<string>? MsgBox_ComboBox_Items 
         {
             get => _msgBox_ComboBox_Items;
             set => SetProperty(ref _msgBox_ComboBox_Items, value);
@@ -259,7 +259,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
 
         delegate void MsgBoxClick(int btnNum);
-        event MsgBoxClick MsgClick;
+        event MsgBoxClick? MsgClick;
         public void MsgBox_Btn1_Click()
         {
             if (MsgClick != null)
@@ -304,7 +304,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             set => SetProperty(ref _msgBox_Btn3_Visab, value);
         }
 
-        private string _msgBox_Btn1_Txt;
+        private string _msgBox_Btn1_Txt = string.Empty;
         public string MsgBox_Btn1_Txt
         {
             get => _msgBox_Btn1_Txt;
@@ -315,7 +315,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _msgBox_Btn2_Txt;
+        private string _msgBox_Btn2_Txt = string.Empty;
         public string MsgBox_Btn2_Txt
         {
             get => _msgBox_Btn2_Txt;
@@ -326,7 +326,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _msgBox_Btn3_Txt;
+        private string _msgBox_Btn3_Txt = string.Empty;
         public string MsgBox_Btn3_Txt
         {
             get => _msgBox_Btn3_Txt;

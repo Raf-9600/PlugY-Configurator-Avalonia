@@ -9,7 +9,19 @@
 
     <Application.Styles>
 
-        <FluentTheme />
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <!--  redefines all colors of the Fluent Light variant  -->
+                <ColorPaletteResources
+                    x:Key="Light"
+                    Accent="#DC0E00"
+                    RegionColor="#FFFFFFFF" />
+                <ColorPaletteResources
+                    x:Key="Dark"
+                    Accent="#A90E00"
+                    RegionColor="#252525" />
+            </FluentTheme.Palettes>
+        </FluentTheme>
 
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="14" />

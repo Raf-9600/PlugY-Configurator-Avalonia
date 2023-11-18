@@ -6,9 +6,11 @@ using System;
 using System.IO;
 using Avalonia.Data.Core.Plugins;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using System.Threading;
 using PlugY_Configurator_Avalonia.ViewModels;
 using PlugY_Configurator_Avalonia.Views;
-using System.Threading;
 
 namespace PlugY_Configurator_Avalonia
 {
@@ -17,7 +19,7 @@ namespace PlugY_Configurator_Avalonia
         public static readonly string MainSettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PlugY Configurator");
         public static readonly string MainSettingsFile = Path.Combine(MainSettingsDir, "Settings.json");
         public static readonly bool FirstStart = AppSettings.TryReadAppSettings(MainSettingsFile);
-        public static Window MainWindow;
+        public static Window? MainWindow;
         public static IClassicDesktopStyleApplicationLifetime? Desktop;
 
         public static readonly System.Text.Json.JsonSerializerOptions jsonOptions = new System.Text.Json.JsonSerializerOptions
@@ -63,6 +65,11 @@ namespace PlugY_Configurator_Avalonia
     }
 
 }
+
+[JsonSerializable(typeof(Dictionary<string, string>))]
+internal partial class DictionaryTypeInfoResolver : JsonSerializerContext
+{ }
+
 public enum OperatingSystemType
 {
     Unknown,

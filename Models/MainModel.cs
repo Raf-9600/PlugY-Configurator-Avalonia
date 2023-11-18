@@ -240,10 +240,14 @@ namespace PlugY_Configurator_Avalonia.Models
 
 
             string? setpPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string fullPath1 = GetFileIgnoreCase(setpPath, nameFile);
 
-            if (File.Exists(fullPath1))
-                return setpPath;
+            if(!string.IsNullOrEmpty(setpPath))
+            {
+                string fullPath1 = GetFileIgnoreCase(setpPath, nameFile);
+
+                if (File.Exists(fullPath1))
+                    return setpPath;
+            }
 
             return string.Empty;
         }
@@ -430,8 +434,10 @@ namespace PlugY_Configurator_Avalonia.Models
 
         
 
-        public static async Task<string[]?> OpenFileDialog(Window targetWindow, (string name, string pattern, string mime)[] fTypes, string title = "", string startOpen = "", bool multiFiles = false)
+        public static async Task<string[]?> OpenFileDialog(Window? targetWindow, (string name, string pattern, string mime)[] fTypes, string title = "", string startOpen = "", bool multiFiles = false)
         {
+            if (targetWindow == null) return null;
+
             var storageProvider = targetWindow.StorageProvider;
 
             var options = new FilePickerOpenOptions

@@ -1,18 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
 	<PlatformTarget>x64</PlatformTarget>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-	<TrimMode>partial</TrimMode>
+	<TrimMode>full</TrimMode>
 	<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	<PublishSingleFile>false</PublishSingleFile>
 	<PublishReadyToRun>false</PublishReadyToRun>
 	  <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 	  <PublishAot>false</PublishAot>
 	  <StripSymbols>true</StripSymbols>
+	  <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
 	  <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
 	  <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	  <SelfContained>true</SelfContained>

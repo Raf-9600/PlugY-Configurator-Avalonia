@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvaloniaLocalizationExample.Localizer;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -14,7 +15,7 @@ using System.Xml.Linq;
 class AppSettings
 {
     private static Dictionary<string, string> appSettings = new();
-    private static byte[] appSettingsFirst = Array.Empty<byte>();
+    private static byte[] appSettingsFirst = [];
     private static IEnumerable<MemberInfo>? mmbrs;
 
 
@@ -25,9 +26,14 @@ class AppSettings
             try
             {
                 appSettingsFirst = File.ReadAllBytes(settingsJson);
-                appSettings = JsonSerializer.Deserialize<Dictionary<string, string>>(appSettingsFirst);
-                if (appSettings != null && appSettings.Count > 0)
+                //appSettings = JsonSerializer.Deserialize<Dictionary<string, string>>(appSettingsFirst);
+
+                var appSettings_tmp = JsonSerializer.Deserialize(appSettingsFirst, typeof(Dictionary<string, string>), DictionaryTypeInfoResolver.Default) as Dictionary<string, string>;
+                if (appSettings_tmp != null && appSettings_tmp.Count > 0)
+                {
+                    appSettings = appSettings_tmp;
                     return false;
+                }
             }
             catch (Exception) { }
         
@@ -213,7 +219,7 @@ class AppSettings
             }
         }
 
-        byte[] appSettingsEnd = JsonSerializer.SerializeToUtf8Bytes(appSettings);
+        byte[] appSettingsEnd = JsonSerializer.SerializeToUtf8Bytes(appSettings, typeof(Dictionary<string, string>), DictionaryTypeInfoResolver.Default);
         if (!ByteArraysEqual(appSettingsFirst, appSettingsEnd))
         {
             string? dir = Path.GetDirectoryName(settingsJson);
@@ -244,11 +250,11 @@ class AppSettings
         if (t == typeof(int) || t == typeof(double))
             return "0";
         else
-        if (t == typeof(bool?) || t == typeof(int?) || t == typeof(double?))
+        //if (t == typeof(bool?) || t == typeof(int?) || t == typeof(double?))
             return "null";
-        else
-            return Convert.ToString(Activator.CreateInstance(t));
-        //return FormatterServices.GetUninitializedObject(t);
+        //else
+            //return Convert.ToString(Activator.CreateInstance(t));
+        //return Convert.ToString(FormatterServices.GetUninitializedObject(t));
     }
 
     
@@ -258,7 +264,7 @@ class AppSettings
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 public sealed class AppSettingsAttribute : Attribute
 {
-    public readonly string Name;
+    public readonly string? Name;
     public AppSettingsAttribute(string name)
     {
         Name = name;

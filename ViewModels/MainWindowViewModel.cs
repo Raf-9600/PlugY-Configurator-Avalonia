@@ -27,14 +27,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         private Models.IniWork _ini = new Models.IniWork();
         private string _plugyDir = "";
 
-        private string _plugyFullPathJson;
+        private string _plugyFullPathJson = string.Empty;
         public string PlugyFullPathJson
         {
             get => _plugyFullPathJson;
             set { SetProperty(ref _plugyFullPathJson, value); }
         }
 
-        private string _plugyFullPath;
+        private string _plugyFullPath = string.Empty;
         [DataMember]
         [AppSettings("Path to PlugY")]
         public string PlugyFullPath
@@ -44,13 +44,16 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             {
                 if (!string.IsNullOrEmpty(value))
                 {
-                    _plugyDir = Path.GetDirectoryName(value);
+                    _plugyDir = Path.GetDirectoryName(value) ?? "";
 
-                    _ini.NotSet = true;
-                    _ini.Initialization(value);
-                    Upd();
-                    _ini.NotSet = false;
-                    PlugyFullPathJson = value;
+                    if (File.Exists(value))
+                    {
+                        _ini.NotSet = true;
+                        _ini.Initialization(value);
+                        Upd();
+                        _ini.NotSet = false;
+                        PlugyFullPathJson = value;
+                    }
                 }
                 SetProperty(ref _plugyFullPath, value);
             }
@@ -371,7 +374,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
 
 
-            if (string.IsNullOrEmpty(PlugyFullPath))
+            if (string.IsNullOrEmpty(PlugyFullPath) || !File.Exists(PlugyFullPath))
             {
                 if (!File.Exists(workFile))
                 {
@@ -476,7 +479,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         }
 
 
-        private string cmbBoxLng_Slctd;
+        private string cmbBoxLng_Slctd = string.Empty;
         [DataMember]
         [AppSettings("Language")]
         public string CmbBoxLng_Slctd
@@ -491,7 +494,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         [DataMember]
         [AppSettings("Language")]
-        private string _lngGui;
+        private string _lngGui = string.Empty;
         public string LngGui
         {
             get => cmbBoxLng_Slctd;
@@ -530,7 +533,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
 
         public void BtnClipboardClick(string parameter)
         {
-            App.MainWindow.Clipboard?.SetTextAsync(parameter);
+            App.MainWindow?.Clipboard?.SetTextAsync(parameter);
         }
 
         public void BtnDefaultClick(string parameter)
@@ -600,10 +603,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                 EnabDarkThemeGUI(_darkThemeGUI);
                 return _darkThemeGUI;
             }
-            set
-            {
-                SetProperty(ref _darkThemeGUI, value);
-            }
+            set { SetProperty(ref _darkThemeGUI, value); }
         }
 
         // https://github.com/wieslawsoltes/Avalonia.ThemeManager
@@ -612,7 +612,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
         {
             if (Application.Current != null)
             {
-                Uri? uri = null;
+                //Uri? uri = null;
 
                 if (enab)
                 {
@@ -622,7 +622,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     MsgBox_BackgroundColor = SolidColorBrush.Parse("#3F3F3F");
                     ThemeInvertColor = SolidColorBrush.Parse("#fff5f5f5");
 
-                    uri = new Uri("avares://PlugY Configurator Avalonia/Styles/AccentColorsDark.axaml");
+                    //uri = new Uri("avares://PlugY Configurator Avalonia/Styles/AccentColorsDark.axaml");
                 }
                 else
                 {
@@ -632,10 +632,10 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                     MsgBox_BackgroundColor = SolidColorBrush.Parse("#fff5f5f5");
                     ThemeInvertColor = SolidColorBrush.Parse("#3F3F3F");
 
-                    uri = new Uri("avares://PlugY Configurator Avalonia/Styles/AccentColorsLight.axaml");
+                    //uri = new Uri("avares://PlugY Configurator Avalonia/Styles/AccentColorsLight.axaml");
                 }
 
-                if (uri != null)
+                /* if (uri != null)
                 {
                     var baseAppUru = new Uri("avares://ControlCatalog/Styles");
                     var styleInclude = new StyleInclude(baseAppUru)
@@ -643,7 +643,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
                         Source = uri
                     };
                     Application.Current.Styles.Add(styleInclude);
-                }
+                } */
             }
 
 
@@ -681,14 +681,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             //Avalonia.Application.Current.Styles[0] = styleInclude;
             //Application.Current.Styles[0] = styleInclude;
 
-            SharedMainIndexPageColor = SharedMainIndexPageColor;
+            /* SharedMainIndexPageColor = SharedMainIndexPageColor;
             SharedIndexPageColor = SharedIndexPageColor;
             SharedNormalPageColor = SharedNormalPageColor;
             PersonalMainIndexPageColor = PersonalMainIndexPageColor;
             PersonalIndexPageColor = PersonalIndexPageColor;
             PersonalNormalPageColor = PersonalNormalPageColor;
             ColorOfPlugYVersion = ColorOfPlugYVersion;
-            ColorOfVersionText = ColorOfVersionText;
+            ColorOfVersionText = ColorOfVersionText; */
         }
         #endregion
 
@@ -1025,7 +1025,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _dllToLoad;
+        private string _dllToLoad = string.Empty;
         public string DllToLoad
         {
             get { return _dllToLoad; }
@@ -1039,7 +1039,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _dllToLoad2;
+        private string _dllToLoad2 = string.Empty;
         public string DllToLoad2
         {
             get { return _dllToLoad2; }
@@ -1053,14 +1053,14 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _dllToLoad_Flyout;
+        private string _dllToLoad_Flyout = string.Empty;
         public string DllToLoad_Flyout
         {
             get { return _dllToLoad_Flyout; }
             set { SetProperty(ref _dllToLoad_Flyout, value); }
         }
 
-        private string _dllToLoad2_Flyout;
+        private string _dllToLoad2_Flyout = string.Empty;
         public string DllToLoad2_Flyout
         {
             get { return _dllToLoad2_Flyout; }
@@ -1144,7 +1144,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _activeCommands_Hint;
+        private string _activeCommands_Hint = string.Empty;
         public string ActiveCommands_Hint
         {
             get { return _activeCommands_Hint; }
@@ -1337,9 +1337,11 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             get { return _selectedLanguage; }
             set
             {
-                var result = _languageListWrite[value];
-                _ini.SetVal("LANGUAGE", "SelectedLanguage", result);
-
+                if (value >= 0)
+                {
+                    string result = _languageListWrite[value];
+                    _ini.SetVal("LANGUAGE", "SelectedLanguage", result);
+                }
                 SetProperty(ref _selectedLanguage, value);
             }
         }
@@ -1552,7 +1554,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _savePath;
+        private string _savePath = string.Empty;
         public string SavePath
         {
             get { return _savePath; }
@@ -1632,7 +1634,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _versionText;
+        private string _versionText = string.Empty;
         public string VersionText
         {
             get { return _versionText; }
@@ -1662,8 +1664,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _colorOfVersionText_Background;
-        public SolidColorBrush ColorOfVersionText_Background
+        private SolidColorBrush? _colorOfVersionText_Background;
+        public SolidColorBrush? ColorOfVersionText_Background
         {
             get { return _colorOfVersionText_Background; }
             set { SetProperty(ref _colorOfVersionText_Background, value); }
@@ -1698,8 +1700,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _colorOfPlugYVersion_Background;
-        public SolidColorBrush ColorOfPlugYVersion_Background
+        private SolidColorBrush? _colorOfPlugYVersion_Background;
+        public SolidColorBrush? ColorOfPlugYVersion_Background
         {
             get { return _colorOfPlugYVersion_Background; }
             set { SetProperty(ref _colorOfPlugYVersion_Background, value); }
@@ -1792,8 +1794,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _personalNormalPageColor_Background;
-        public SolidColorBrush PersonalNormalPageColor_Background
+        private SolidColorBrush? _personalNormalPageColor_Background;
+        public SolidColorBrush? PersonalNormalPageColor_Background
         {
             get { return _personalNormalPageColor_Background; }
             set { SetProperty(ref _personalNormalPageColor_Background, value); }
@@ -1818,8 +1820,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _personalIndexPageColor_Background;
-        public SolidColorBrush PersonalIndexPageColor_Background
+        private SolidColorBrush? _personalIndexPageColor_Background;
+        public SolidColorBrush? PersonalIndexPageColor_Background
         {
             get { return _personalIndexPageColor_Background; }
             set { SetProperty(ref _personalIndexPageColor_Background, value); }
@@ -1844,8 +1846,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _personalMainIndexPageColor_Background;
-        public SolidColorBrush PersonalMainIndexPageColor_Background
+        private SolidColorBrush? _personalMainIndexPageColor_Background;
+        public SolidColorBrush? PersonalMainIndexPageColor_Background
         {
             get { return _personalMainIndexPageColor_Background; }
             set { SetProperty(ref _personalMainIndexPageColor_Background, value); }
@@ -1870,8 +1872,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _sharedNormalPageColor_Background;
-        public SolidColorBrush SharedNormalPageColor_Background
+        private SolidColorBrush? _sharedNormalPageColor_Background;
+        public SolidColorBrush? SharedNormalPageColor_Background
         {
             get { return _sharedNormalPageColor_Background; }
             set { SetProperty(ref _sharedNormalPageColor_Background, value); }
@@ -1896,8 +1898,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _sharedIndexPageColor_Background;
-        public SolidColorBrush SharedIndexPageColor_Background
+        private SolidColorBrush? _sharedIndexPageColor_Background;
+        public SolidColorBrush? SharedIndexPageColor_Background
         {
             get { return _sharedIndexPageColor_Background; }
             set { SetProperty(ref _sharedIndexPageColor_Background, value); }
@@ -1922,8 +1924,8 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private SolidColorBrush _sharedMainIndexPageColor_Background;
-        public SolidColorBrush SharedMainIndexPageColor_Background
+        private SolidColorBrush? _sharedMainIndexPageColor_Background;
+        public SolidColorBrush? SharedMainIndexPageColor_Background
         {
             get { return _sharedMainIndexPageColor_Background; }
             set { SetProperty(ref _sharedMainIndexPageColor_Background, value); }
@@ -1962,7 +1964,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _sharedStashFilename;
+        private string _sharedStashFilename = string.Empty;
         public string SharedStashFilename
         {
             get { return _sharedStashFilename; }
@@ -2588,7 +2590,7 @@ namespace PlugY_Configurator_Avalonia.ViewModels
             }
         }
 
-        private string _itemsToSell;
+        private string _itemsToSell = string.Empty;
         public string ItemsToSell
         {
             get { return _itemsToSell; }
