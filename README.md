@@ -3,7 +3,7 @@
 # PlugY Configurator Avalonia
 PlugY Configurator with AvaloniaUI
 
-Supported OS - https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md
+Supported OS - https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md
 
 # Thanks
 
